@@ -23,7 +23,8 @@ export default {
 
 <style scoped lang="stylus">
   .wrapper 
-    margin 2% 10%
+    padding 2% 10%
+    background #080F3D
 </style>
 
 
