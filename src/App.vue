@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
-    <head></head>
+    <qk-header></qk-header>
     <progress-bar></progress-bar>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import Head from './component/Head'
+import QkHeader from './component/Header'
 import ProgressBar from './component/ProgressBar'
 
 export default {
@@ -15,7 +15,7 @@ export default {
     return {}
   },
   components: {
-    Head,
+    QkHeader,
     ProgressBar
   }
 }

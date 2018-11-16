@@ -7,7 +7,7 @@
 
 <script type="text/ecmascript-6">
 export default {
-  name: 'Roll',
+  name: 'QKheader',
   data() {
     return {}
   },
@@ -20,6 +20,7 @@ export default {
   .wrapper
     display flex
     color $color-active
+    overflow hidden
     .title
       margin 0 auto
       font-size $font-big
