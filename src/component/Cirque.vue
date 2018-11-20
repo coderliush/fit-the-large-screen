@@ -99,8 +99,8 @@ export default {
           top: "center", // 描述怎么根据父元素进行定位。top 和 bottom 只有一个可以生效。如果指定 top 或 bottom，则 shape 里的 y、cy 等定位属性不再生效。『父元素』是指：如果是顶层元素，父元素是 echarts 图表容器。如果是 group 的子元素，父元素就是 group 元素。
           left: "center", // 同上
           style: {
-            text: "各服装销量对比", // 文本块文字。可以使用 \n 来换行。[ default: '' ]
-            fill: "#fff", // 填充色。
+            text: "9999999999", // 文本块文字。可以使用 \n 来换行。[ default: '' ]
+            fill: "red", // 填充色。
             fontSize: 16, // 字体大小
             fontWeight: "bold" // 文字字体的粗细，可选'normal'，'bold'，'bolder'，'lighter'
           }
