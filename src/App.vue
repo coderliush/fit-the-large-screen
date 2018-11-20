@@ -1,9 +1,10 @@
 <template>
-  <div class="wrapper">
+  <div class="container">
     <qk-header></qk-header>
     <progress-bar></progress-bar>
-    <div>
-      <left />
+    <div class="layout">
+      <left class="left" />
+      <right class="right" />
     </div>
 
   </div>
@@ -13,6 +14,7 @@
 import QkHeader from 'component/Header'
 import ProgressBar from 'component/ProgressBar'
 import Left from 'component/Left'
+import Right from 'component/Right'
 
 export default {
   name: 'app',
@@ -22,14 +24,20 @@ export default {
   components: {
     QkHeader,
     ProgressBar,
-    Left
+    Left,
+    Right
   }
 }
 </script>
 
 <style scoped lang="stylus">
-    .wrapper
+    .container
       margin 2% 10%
+      .layout
+        display flex
+        margin-top 2%
+        .left, .right
+          flex 1
 </style>
 
 

@@ -124,6 +124,7 @@ export default {
           flex 1
           margin 0 3%
           text-align center
+
         .data .data-already
           color #469EAF
         

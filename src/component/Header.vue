@@ -19,6 +19,7 @@ export default {
 @import '../common/stylus/variable'
   .wrapper
     display flex
+    margin 3% 0
     color $color-active
     overflow hidden
     .title

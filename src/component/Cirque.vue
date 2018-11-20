@@ -1,5 +1,5 @@
 <template>
-  <div id="main" style="width: 600px;height:400px;"></div>
+  <div :id="`main${type}`"></div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -14,22 +14,22 @@ export default {
   data() {
     return {
       
-    };
+    }
   },
   components: {},
   mounted() {
-    this.init();
+    this.init()
   },
   methods: {
     init() {
       // 按需引入echarts
-      const echarts = require("echarts/lib/echarts");
-      require("echarts/lib/chart/pie");
+      const echarts = require("echarts/lib/echarts")
+      require("echarts/lib/chart/pie")
 
-      const chart = echarts.init(document.getElementById("main"));
+      const chart = echarts.init(document.getElementById(`main${this.type}`))
       if (this.type === 1) {
-        var color = ["#79C171", "#FB62B5", "#19ABF7"];
-        // 圆环图各环节的名称和值(系列中各数据项的名称和值)
+        var color = ["#79C171", "#FB62B5", "#19ABF7"]
+        // 圆环图各环节的名称和值(系列中各数据项的名称和值)  
         var data = [
           {
             name: "a",
@@ -43,12 +43,31 @@ export default {
             name: "c",
             value: 36.5
           },
-        ];
+        ]
       } else if (this.type === 2) {
-        const color = ["#FEAA03", "#355E96"];
-        const data = [{}];
+        var color = ["#FEAA03", "#355E96"]
+        var data = [
+          {
+            name: "维修率",
+            value: 36.5
+          },
+          {
+            name: "b",
+            value: 36.5
+          },
+        ]
       } else {
-        const color = ["#19ABF7", "#355E96"];
+        var  color = ["#19ABF7", "#355E96"]
+        var data = [
+          {
+            name: "品牌A",
+            value: 36.5
+          },
+          {
+            name: "品牌B",
+            value: 36.5
+          },
+        ]
       }
       console.log("data", data);
 
@@ -68,7 +87,6 @@ export default {
             data: ["1", "2", "3", "4"]
           }
         ], 
-
         // 提示框
         tooltip: {
           show: true, // 是否显示提示框    
@@ -102,7 +120,7 @@ export default {
               normal: {
                 show: true, // 是否显示标签[ default: false ]
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
-                formatter: "{c}%" // 标签内容
+                formatter: "{b}:{c}%" // 标签内容
               }
             },
             labelLine: {
