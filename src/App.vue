@@ -2,12 +2,17 @@
   <div class="wrapper">
     <qk-header></qk-header>
     <progress-bar></progress-bar>
+    <div>
+      <left />
+    </div>
+
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import QkHeader from './component/Header'
-import ProgressBar from './component/ProgressBar'
+import QkHeader from 'component/Header'
+import ProgressBar from 'component/ProgressBar'
+import Left from 'component/Left'
 
 export default {
   name: 'app',
@@ -16,15 +21,15 @@ export default {
   },
   components: {
     QkHeader,
-    ProgressBar
+    ProgressBar,
+    Left
   }
 }
 </script>
 
 <style scoped lang="stylus">
-  .wrapper 
-    padding 2% 10%
-    background #080F3D
+    .wrapper
+      margin 2% 10%
 </style>
 
 

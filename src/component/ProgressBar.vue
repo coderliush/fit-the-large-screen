@@ -4,9 +4,9 @@
       <p>{{item.name}}</p>
       <div class="bar" v-for="(each, eachIndex) in item.data" :key="eachIndex">
         <p>{{each.name}}</p>
-        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" status="success"></el-progress>
+        <el-progress :text-inside="true" :stroke-width="18" :percentage="80" :color="item.color"></el-progress>
         <p class="data">
-          <span class="data-already color-active">{{each.already}}</span>
+          <span class="data-already">{{each.already}}</span>
           <span class="data-all font-">/{{each.all}}</span>
         </p>
       </div>
@@ -32,26 +32,30 @@ export default {
     this.itemArr = [
       {
       name: '在线设备统计',
+      color: '#79C171',
       data: [{
         name: '网关',
         already: 200,
-        all: 400
+        all: 400,
       },{
         name: '网关',
         already: 200,
-        all: 400
+        all: 400,
+        color: '#FB62B5'
       },{
         name: '网关',
         already: 200,
-        all: 400
+        all: 400,
+        color: '#FEAA03'
       }]
     },
     {
       name: '在线设备统计',
+      color: '#FB62B5',
       data: [{
         name: '网关',
         already: 200,
-        all: 400
+        all: 400,
       },{
         name: '网关',
         already: 200,
@@ -63,6 +67,7 @@ export default {
       }]
     },{
       name: '在线设备统计',
+      color: '#FDAC07',
       data: [{
         name: '网关',
         already: 200,
@@ -79,6 +84,7 @@ export default {
     },
     {
       name: '在线设备统计',
+      color: '#18ADF5',
       data: [{
         name: '网关',
         already: 200,
@@ -99,7 +105,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import '../common/stylus/variable'
+@import '~common/stylus/ui'
+@import '~common/stylus/variable'
 
   .wrapper
     display flex
@@ -111,13 +118,15 @@ export default {
       font-size $font-normal
       .bar 
         display flex
-        margin 4% 0
+        margin 8% 0
         font-size $font-small
         .el-progress
           flex 1
-          margin 0 1%
+          margin 0 3%
           text-align center
+        .data .data-already
+          color #469EAF
         
 
-</style> 
+</style>  
 
