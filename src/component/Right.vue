@@ -5,18 +5,20 @@
 </template>
 
 <script type="text/ecmascript-6">
+import axios from "axios"
+import cityMap from '../../public/js/citymap.js'
 export default {
   name: "",
   data() {
-    return {}
+    return {};
   },
   components: {},
   mounted() {
-    this.init()
+    this.init();
   },
   methods: {
     init() {
-      const echarts = require("echarts/lib/echarts")
+      const echarts = require("echarts")
       //地图容器
       var chart = echarts.init(document.getElementById("main"))
       //34个省、市、自治区的名字拼音映射数组
@@ -65,14 +67,16 @@ export default {
       var special = ["北京", "天津", "上海", "重庆", "香港", "澳门"]
       var mapdata = []
       //绘制全国地图
-      axios.get('static/map/china.json').then(res => {
-        d = []
+      axios.get("http://192.168.103.47:8082/map/china.json").then(res => {
+        const d = [],
+          data = res.data
+
         for (var i = 0; i < data.features.length; i++) {
           d.push({
             name: data.features[i].properties.name
           })
         }
-        mapdata = d
+        mapdata = d;
         //注册地图
         echarts.registerMap("china", data)
         //绘制地图
@@ -84,41 +88,36 @@ export default {
         console.log(params);
         if (params.name in provinces) {
           //如果点击的是34个省、市、自治区，绘制选中地区的二级地图
-          $.getJSON(
-            "static/map/province/" + provinces[params.name] + ".json",
-            function(data) {
-              echarts.registerMap(params.name, data);
-              var d = [];
-              for (var i = 0; i < data.features.length; i++) {
-                d.push({
-                  name: data.features[i].properties.name
-                });
-              }
-              renderMap(params.name, d);
+          axios.get(`http://192.168.103.47:8082/map/province/${provinces[params.name]}.json`).then(res => {
+            const d = [], data = res.data
+            echarts.registerMap(params.name, data)
+            for (var i = 0; i < data.features.length; i++) {
+              d.push({
+                name: data.features[i].properties.name
+              })
             }
-          )
+            renderMap(params.name, d)
+          })
         } else if (params.seriesName in provinces) {
           //如果是【直辖市/特别行政区】只有二级下钻
           if (special.indexOf(params.seriesName) >= 0) {
             renderMap("china", mapdata);
           } else {
             //显示县级地图
-            $.getJSON(
-              "static/map/city/" + cityMap[params.name] + ".json",
-              function(data) {
-                echarts.registerMap(params.name, data);
-                var d = [];
-                for (var i = 0; i < data.features.length; i++) {
-                  d.push({
-                    name: data.features[i].properties.name
-                  });
-                }
-                renderMap(params.name, d);
+            console.log('cityMap', cityMap)
+            axios.get(`http://192.168.103.47:8082/map/city/${cityMap[params.name]}.json`).then(res => {
+              const d = [], data = res.data
+              echarts.registerMap(params.name, data)
+              for (var i = 0; i < data.features.length; i++) {
+                d.push({
+                  name: data.features[i].properties.name
+                })
               }
-            );
+              renderMap(params.name, d)
+            })
           }
         } else {
-          renderMap("china", mapdata);
+          renderMap("china", mapdata)
         }
       })
 
@@ -128,7 +127,7 @@ export default {
         title: {
           text: "Echarts3 中国地图下钻至县级",
           subtext: "三级下钻",
-          link: "https://blog.csdn.net/example440982",
+          link: "",
           left: "center",
           textStyle: {
             color: "#fff",
@@ -168,7 +167,7 @@ export default {
         animationDurationUpdate: 1000
       };
       function renderMap(map, data) {
-        option.title.subtext = map;
+        option.title.subtext = map
         option.series = [
           {
             name: map,
@@ -207,7 +206,7 @@ export default {
           }
         ];
         //渲染地图
-        chart.setOption(option)
+        chart.setOption(option);
       }
     }
   }
