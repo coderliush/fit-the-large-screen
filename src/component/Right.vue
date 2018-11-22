@@ -69,14 +69,14 @@ export default {
       //绘制全国地图
       axios.get("http://192.168.103.47:8082/map/china.json").then(res => {
         const d = [],
-          data = res.data
+              data = res.data
 
         for (var i = 0; i < data.features.length; i++) {
           d.push({
             name: data.features[i].properties.name
           })
         }
-        mapdata = d;
+        mapdata = d
         //注册地图
         echarts.registerMap("china", data)
         //绘制地图
@@ -85,7 +85,6 @@ export default {
 
       //地图点击事件
       chart.on("click", function(params) {
-        console.log(params);
         if (params.name in provinces) {
           //如果点击的是34个省、市、自治区，绘制选中地区的二级地图
           axios.get(`http://192.168.103.47:8082/map/province/${provinces[params.name]}.json`).then(res => {
@@ -101,10 +100,9 @@ export default {
         } else if (params.seriesName in provinces) {
           //如果是【直辖市/特别行政区】只有二级下钻
           if (special.indexOf(params.seriesName) >= 0) {
-            renderMap("china", mapdata);
+            renderMap("china", mapdata)
           } else {
             //显示县级地图
-            console.log('cityMap', cityMap)
             axios.get(`http://192.168.103.47:8082/map/city/${cityMap[params.name]}.json`).then(res => {
               const d = [], data = res.data
               echarts.registerMap(params.name, data)
@@ -125,8 +123,8 @@ export default {
       var option = {
         backgroundColor: "#000",
         title: {
-          text: "Echarts3 中国地图下钻至县级",
-          subtext: "三级下钻",
+          text: "",
+          subtext: "",
           link: "",
           left: "center",
           textStyle: {
@@ -206,7 +204,7 @@ export default {
           }
         ];
         //渲染地图
-        chart.setOption(option);
+        chart.setOption(option)
       }
     }
   }
