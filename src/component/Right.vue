@@ -1,7 +1,5 @@
 <template>
-  <div id="main" style="width: 100%;height:800px;">
-
-  </div>
+  <div id="main" style="width: 100%;height:800px;"></div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -10,11 +8,11 @@ import cityMap from '../../public/js/citymap.js'
 export default {
   name: "",
   data() {
-    return {};
+    return {}
   },
   components: {},
   mounted() {
-    this.init();
+    this.init()
   },
   methods: {
     init() {
@@ -67,7 +65,7 @@ export default {
       var special = ["北京", "天津", "上海", "重庆", "香港", "澳门"]
       var mapdata = []
       //绘制全国地图
-      axios.get("http://192.168.103.47:8082/map/china.json").then(res => {
+      axios.get("http://localhost:8082/map/china.json").then(res => {
         const d = [],
               data = res.data
 
@@ -87,7 +85,7 @@ export default {
       chart.on("click", function(params) {
         if (params.name in provinces) {
           //如果点击的是34个省、市、自治区，绘制选中地区的二级地图
-          axios.get(`http://192.168.103.47:8082/map/province/${provinces[params.name]}.json`).then(res => {
+          axios.get(`http://localhost:8082/map/province/${provinces[params.name]}.json`).then(res => {
             const d = [], data = res.data
             echarts.registerMap(params.name, data)
             for (var i = 0; i < data.features.length; i++) {
@@ -103,7 +101,7 @@ export default {
             renderMap("china", mapdata)
           } else {
             //显示县级地图
-            axios.get(`http://192.168.103.47:8082/map/city/${cityMap[params.name]}.json`).then(res => {
+            axios.get(`http://localhost:8082/map/city/${cityMap[params.name]}.json`).then(res => {
               const d = [], data = res.data
               echarts.registerMap(params.name, data)
               for (var i = 0; i < data.features.length; i++) {
