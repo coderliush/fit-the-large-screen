@@ -1,21 +1,25 @@
 <template>
-  <div class="wrapper">
-    <div class="item" v-for="(item, index) in itemArr" :key="index">
-      <p>{{item.name}}</p>
-      <div class="bar" v-for="(each, eachIndex) in item.data" :key="eachIndex">
-        <p>{{each.name}}</p>
-        <el-progress :text-inside="true" :stroke-width="18" :percentage="80" :color="item.color"></el-progress>
-        <p class="data">
-          <span class="data-already">{{each.already}}</span>
-          <span class="data-all font-">/{{each.all}}</span>
-        </p>
+  <div class="progress">
+    <div class="title">
+      <img src="../common/img/icon/bulb.png" alt="">
+      <p>设备装填-【全国/运营管理本部】</p>
+    </div>
+    <div class="item-group">
+      <div class="item" v-for="(item, index) in itemArr" :key="index">
+        <div class="sub">
+          <img :src="item.url" alt="">
+          <p>{{item.name}}</p>
+        </div>
+        <div class="bar" v-for="(each, eachIndex) in item.data" :key="eachIndex">
+          <p>{{each.name}}</p>
+          <el-progress :text-inside="true" :stroke-width="18" :percentage="80" :color="item.color"></el-progress>
+          <p class="data">
+            <span class="data-already">{{each.already}}</span>
+            <span class="data-all font-">/{{each.all}}</span>
+          </p>
+        </div>
       </div>
     </div>
-
-
-  
-
-
   </div>
 </template>
 
@@ -32,6 +36,7 @@ export default {
     this.itemArr = [
       {
       name: '在线设备统计',
+      url: '../common/img/icon/inline.png',
       color: '#79C171',
       data: [{
         name: '网关',
@@ -39,18 +44,21 @@ export default {
         all: 400,
       },{
         name: '网关',
+        url: '../common/img/icon/outline.png',
         already: 200,
         all: 400,
         color: '#FB62B5'
       },{
         name: '网关',
+        url: '../common/img/icon/operation.png',
         already: 200,
         all: 400,
         color: '#FEAA03'
       }]
     },
     {
-      name: '在线设备统计',
+      name: '离线设备统计',
+      url: '../common/img/icon/wheel.png',
       color: '#FB62B5',
       data: [{
         name: '网关',
@@ -66,7 +74,7 @@ export default {
         all: 400
       }]
     },{
-      name: '在线设备统计',
+      name: '维修设备统计',
       color: '#FDAC07',
       data: [{
         name: '网关',
@@ -83,7 +91,7 @@ export default {
       }]
     },
     {
-      name: '在线设备统计',
+      name: '未安装设备统计',
       color: '#18ADF5',
       data: [{
         name: '网关',
@@ -108,23 +116,39 @@ export default {
 @import '~common/stylus/ui'
 @import '~common/stylus/variable'
 
-  .wrapper
-    display flex
-    color $font-active
-    border 1px solid #3E527C
-    .item
-      flex 1
-      padding 2%
+  .progress
+    background url('../common/img/bar-border.png') no-repeat
+    background-size 100% 100%
+    .title
+      position relative
+      top: .14rem
+      left 1.2rem
+      display flex
+      align-items center
       font-size $font-normal
-      .bar 
-        display flex
-        margin 8% 0
-        font-size $font-small
-        .el-progress
-          flex 1
-          margin 0 3%
-        .data .data-already
-          color #469EAF
+      color #fff
+      img 
+        width .3rem
+        height .3rem
+        margin-right .05rem
+    .item-group
+      display flex
+      .item
+        flex 1
+        padding 2%
+        font-size $font-normal
+        p
+          margin-bottom .2rem
+        .bar 
+          display flex
+          padding .2rem 0.8rem .2rem 0 
+          font-size $font-small
+          border-right 1px solid #055B7D
+          .el-progress
+            flex 1
+            margin 0 3%
+          .data .data-already
+            color #469EAF
         
 
 </style>  

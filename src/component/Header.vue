@@ -1,11 +1,9 @@
 <template>
-  <div class="wrapper">
+  <div class="header">
     <div class="title">青客物联网监控面板v1.0.0.0</div>
-    <div class="roll-wrapper">
-      <div class="roll">
-        <img src="../common/img/icon/notice.png" alt="">
+    <div class="roll">
+      <img src="../common/img/icon/notice.png" alt="">
         告警区域：当下XX设备/发生【数量】【状态】/【滚动】</div>
-    </div>
     </div>
 </template>
 
@@ -21,34 +19,34 @@ export default {
 
 <style scoped lang="stylus">
 @import '../common/stylus/variable'
-  .wrapper
+  .header
     position relative
+    top .3rem
     display flex
     justify-content center
-    height 1rem
-    line-height 1rem
+    margin-bottom .8rem
+    padding-bottom .1rem
     color $color-active
     overflow hidden
     .title 
-      font-size $font-big
-      background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(0, 128, 0, 1)), to(rgba(51, 51, 51, 1)))
+      font-size $font-big 
+      font-weight bold
+      background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(217, 242, 251, 1)), to(rgba(144, 215, 235, 1)))
       -webkit-background-clip: text
       -webkit-text-fill-color: transparent
-    .roll-wrapper
-      padding 0.32rem
-      .roll
-        position absolute 
-        right 0
-        font-size $font-small
-        color #BF0F27
-        animation rolling 5s linear infinite
+    .roll
+      position absolute 
+      right 0
+      font-size $font-small
+      color #BF0F27
+      animation rolling 5s linear infinite
   
   @keyframes rolling 
     0% 
-      transform translateY(.6rem)
+      transform translateY(.4rem)
     
     100%
-      transform translateY(-.6rem)
+      transform translateY(-.5rem)
   
 
 </style>  
