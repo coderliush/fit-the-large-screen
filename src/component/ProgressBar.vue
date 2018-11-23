@@ -10,12 +10,12 @@
           <img :src="item.url" alt="">
           <p>{{item.name}}</p>
         </div>
-        <div class="bar" v-for="(each, eachIndex) in item.data" :key="eachIndex">
+        <div :class="index !== 3 ? 'border-right' : null" class="bar" v-for="(each, eachIndex) in item.data" :key="eachIndex">
           <p>{{each.name}}</p>
           <el-progress :text-inside="true" :stroke-width="18" :percentage="80" :color="item.color"></el-progress>
           <p class="data">
             <span class="data-already">{{each.already}}</span>
-            <span class="data-all font-">/{{each.all}}</span>
+            <span class="data-all">/{{each.all}}</span>
           </p>
         </div>
       </div>
@@ -115,6 +115,8 @@ export default {
 <style scoped lang="stylus">
 @import '~common/stylus/ui'
 @import '~common/stylus/variable'
+  .border-right
+    border-right 1px solid #055B7D
 
   .progress
     background url('../common/img/bar-border.png') no-repeat
@@ -143,7 +145,6 @@ export default {
           display flex
           padding .2rem 0.8rem .2rem 0 
           font-size $font-small
-          border-right 1px solid #055B7D
           .el-progress
             flex 1
             margin 0 3%
