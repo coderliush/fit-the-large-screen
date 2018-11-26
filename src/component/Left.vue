@@ -47,10 +47,10 @@ export default {
     flex-direction column
     .title
       display flex
+      position relative
+      left .34rem
       .left
         display flex
-        position relative
-        left .34rem
         p
           display flex
           align-items center
