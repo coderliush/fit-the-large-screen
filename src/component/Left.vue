@@ -49,6 +49,8 @@ export default {
       display flex
       .left
         display flex
+        position relative
+        left .34rem
         p
           display flex
           align-items center
@@ -68,11 +70,12 @@ export default {
       display flex
       justify-content center
       .cirque-wrapper
+        flex 1
+        display flex
         border-top 1px solid #3C8BB7
         border-bottom 1px solid #3C8BB7
         .item
           width 33%
-          height 30vh
 </style>
 
 
