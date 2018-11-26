@@ -1,12 +1,13 @@
 <template>
-  <div class="container">
+  <div class="wrapper">
     <qk-header></qk-header>
-    <progress-bar></progress-bar>
-    <div class="layout">
-      <left class="left" />
-      <right class="right" />
+    <div class="container">
+      <progress-bar></progress-bar>
+      <div class="layout">
+        <left class="left" />
+        <right class="right" />
+      </div>
     </div>
-
   </div>
 </template>
 

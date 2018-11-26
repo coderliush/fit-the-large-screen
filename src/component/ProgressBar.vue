@@ -112,7 +112,7 @@ export default {
 };
 </script>
 
-<style scoped lang="stylus">
+<style lang="stylus">
 @import '~common/stylus/ui'
 @import '~common/stylus/variable'
   .border-right

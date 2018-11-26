@@ -21,11 +21,12 @@ export default {
 @import '../common/stylus/variable'
   .header
     position relative
-    top .3rem
     display flex
     justify-content center
+    background url('../common/img/header.png') 
+    background-size 100% 100%
+    padding .3rem
     margin-bottom .8rem
-    padding-bottom .1rem
     color $color-active
     overflow hidden
     .title 
