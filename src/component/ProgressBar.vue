@@ -1,5 +1,9 @@
 <template>
   <div class="progress">
+    <div class="roll">
+      <img src="../common/img/icon/notice.png" alt="">
+        告警区域：当下XX设备/发生【数量】【状态】/【滚动】
+    </div>
     <div class="title">
       <img src="../common/img/icon/bulb.png" alt="">
       <p>设备装填-【全国/运营管理本部】</p>
@@ -115,12 +119,26 @@ export default {
 <style lang="stylus">
 @import '~common/stylus/ui'
 @import '~common/stylus/variable'
+  @keyframes rolling 
+    0% 
+      transform translateY(.4rem)
+    100%
+      transform translateY(-.5rem)
+
   .border-right
     border-right 1px solid #055B7D
 
   .progress
+    position relative
     background url('../common/img/bar-border.png') no-repeat
     background-size 100% 100%
+    overflow hidden
+    .roll
+      position absolute 
+      right 0
+      font-size $font-small
+      color #BF0F27
+      animation rolling 5s linear infinite
     .title
       position relative
       top: .14rem
@@ -139,10 +157,9 @@ export default {
         flex 1
         padding 2%
         font-size $font-normal
-        p
-          margin-bottom .2rem
         .bar 
           display flex
+          align-items center
           padding .2rem 0.8rem .2rem 0 
           font-size $font-small
           .el-progress
