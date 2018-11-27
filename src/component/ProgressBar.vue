@@ -14,7 +14,7 @@
     </div>
     <div class="item-group">
       <img src="../common/img/border-left.png" alt="">
-      <div class="bar-wrapper">
+      <div class="item-wrapper">
         <div class="item" v-for="(item, index) in itemArr" :key="index">
           <div class="sub">
             <img :src="item.url" alt="">
@@ -155,14 +155,17 @@ export default {
         background #165AA2
     .item-group
       display flex
-      .bar-wrapper
+      .item-wrapper
         flex 1
         display flex
         background url('../common/img/border.png')
         .item
           flex 1
+          display flex
+          flex-direction column
           font-size $font-normal
           .bar 
+            flex 1
             display flex
             align-items center
             font-size $font-small
