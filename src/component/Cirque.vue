@@ -22,9 +22,8 @@ export default {
   },
   methods: {
     init() {
-      // 按需引入echarts
-      const echarts = require("echarts/lib/echarts")
-      require("echarts/lib/chart/pie")
+      // 引入echarts
+      const echarts = require("echarts")
 
       const chart = echarts.init(document.getElementById(`main${this.type}`))
       if (this.type === 1) {
@@ -95,12 +94,21 @@ export default {
           elements: [{
               type: 'image',
               style: {
-                  image: '../common/img/icon/bulb.png',
-                  width: 130,
-                  height: 130
+                  image: require('../common/img/icon/bulb.png'),
+                  width: 20,
+                  height: 20
               },
               left: 'center',
               top: 'center'
+          },{
+            type: 'text',
+            style: {
+              text: '555',
+              width: 20,
+              height: 20
+              },
+            left: 'center',
+            top: 'center'
           }]
         },
 
