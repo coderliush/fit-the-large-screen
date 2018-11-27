@@ -72,8 +72,7 @@ export default {
       .cirque-wrapper
         flex 1
         display flex
-        border-top 1px solid #3C8BB7
-        border-bottom 1px solid #3C8BB7
+        background url('../common/img/border.png')
         .item
           width 33%
 </style>
