@@ -91,19 +91,31 @@ export default {
           show: true, // 是否显示提示框    
           formatter: "{b} </br> 销量{c}件 </br> 占比{d}%" // 提示框显示内容,此处{b}表示各数据项名称，此项配置为默认显示项，{c}表示数据项的值，默认不显示，({d}%)表示数据项项占比，默认不显示。
         },
+        graphic: {
+          elements: [{
+              type: 'image',
+              style: {
+                  image: '../common/img/icon/bulb.png',
+                  width: 130,
+                  height: 130
+              },
+              left: 'center',
+              top: 'center'
+          }]
+        },
 
         // graphic 是原生图形元素组件。可以支持的图形元素包括：image, text, circle, sector, ring, polygon, polyline, rect, line, bezierCurve, arc, group,
-        graphic: {
-          type: "text", // [ default: image ]用 setOption 首次设定图形元素时必须指定。image, text, circle, sector, ring, polygon, polyline, rect, line, bezierCurve, arc, group,
-          top: "center", // 描述怎么根据父元素进行定位。top 和 bottom 只有一个可以生效。如果指定 top 或 bottom，则 shape 里的 y、cy 等定位属性不再生效。『父元素』是指：如果是顶层元素，父元素是 echarts 图表容器。如果是 group 的子元素，父元素就是 group 元素。
-          left: "center", // 同上
-          style: {
-            text: "9999999999", // 文本块文字。可以使用 \n 来换行。[ default: '' ]
-            fill: "red", // 填充色。
-            fontSize: 16, // 字体大小
-            fontWeight: "bold" // 文字字体的粗细，可选'normal'，'bold'，'bolder'，'lighter'
-          }
-        },
+        // graphic: {
+        //   type: "text", // [ default: image ]用 setOption 首次设定图形元素时必须指定。image, text, circle, sector, ring, polygon, polyline, rect, line, bezierCurve, arc, group,
+        //   top: "center", // 描述怎么根据父元素进行定位。top 和 bottom 只有一个可以生效。如果指定 top 或 bottom，则 shape 里的 y、cy 等定位属性不再生效。『父元素』是指：如果是顶层元素，父元素是 echarts 图表容器。如果是 group 的子元素，父元素就是 group 元素。
+        //   left: "center", // 同上
+        //   style: {
+        //     text: "99", // 文本块文字。可以使用 \n 来换行。[ default: '' ]
+        //     fill: "red", // 填充色。
+        //     fontSize: 16, // 字体大小
+        //     fontWeight: "bold" // 文字字体的粗细，可选'normal'，'bold'，'bolder'，'lighter'
+        //   }
+        // },
 
         // 系列列表
         series: [
@@ -126,7 +138,7 @@ export default {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 15, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length: 15, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。  
                 length2: 10, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
