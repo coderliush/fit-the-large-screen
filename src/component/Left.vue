@@ -101,6 +101,7 @@ export default {
   .wrapper 
     display flex
     flex-direction column
+    margin-right .3rem
     .title
       display flex
       position relative

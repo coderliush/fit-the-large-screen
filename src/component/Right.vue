@@ -1,17 +1,21 @@
 <template>
   <div class="map">
     <div class="title">
-      <img src="../common/img/map-bg.png" alt="">
-      <p>运营</p>
-      <img class="transform" src="../common/img/map-bg.png" alt="">
-      <img src="../common/img/title-left.png" alt="">
-      <p>行政区切换</p>
-      <img src="../common/img/title-right.png" alt="">
+      <div class="part1">
+        <img src="../common/img/map-bg.png" alt="">
+        <p>运营</p>
+        <img src="../common/img/map-bg.png" alt="">
+      </div>
+      <div class="part2">
+        <img src="../common/img/title-left.png" alt="">
+        <p>行政区切换</p>
+        <img src="../common/img/title-right.png" alt="">
+      </div>
     </div>
 
     <div class="main">
       <img src="../common/img/map-left.png" alt="">
-      <div id="map" style="width: 100%; height: 500px"></div>
+      <div id="map" style="width: 100%;"></div>
       <img src="../common/img/map-right.png" alt="">
     </div>
   </div>
@@ -227,21 +231,29 @@ export default {
 <style scoped lang="stylus">
   .title
     display flex
-    p
+    .part1, .part2
       display flex
-      align-items center
-    p:nth-of-type(1)
-      color #050230
-      background #00FFFB
-    p:nth-of-type(2)
-      color #459EFF
-      background #1559A0
-    .transform
-      transform rotate(180deg)
+    .part1 
+      position relative
+      left .4rem
+      > p
+        display flex
+        align-items center
+        color #050230
+        background #00FFFB
+      > img:nth-of-type(2) 
+        transform rotate(180deg)
+    .part2
+      position relative
+      right .06rem
+      > p
+        display flex
+        align-items center
+        color #459EFF
+        background  #1559A0
   
   .main
     display flex
     .map
-      flex 1
       background url('../common/img/map-point.png')
 </style>
