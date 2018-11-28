@@ -1,9 +1,5 @@
 <template>
   <div class="progress">
-    <div class="roll">
-      <img src="../common/img/icon/notice.png" alt="">
-        告警区域：当下XX设备/发生【数量】【状态】/【滚动】
-    </div>
     <div class="title">
       <img src="../common/img/title-left.png" alt="">
       <p>
@@ -11,6 +7,11 @@
         <span>设备装填-【全国/运营管理本部】</span>
       </p>
       <img src="../common/img/title-right.png" alt="">
+
+      <div class="roll">
+        <img src="../common/img/icon/notice.png" alt="">
+          告警区域：当下XX设备/发生【数量】【状态】/【滚动】
+      </div>
     </div>
     <div class="item-group">
       <img src="../common/img/border-left.png" alt="">
@@ -133,25 +134,24 @@ export default {
     100%
       transform translateY(-.5rem)
 
-  .border-right
-    border-right 1px solid #055B7D
-
   .progress
     position relative
-    overflow hidden
-    .roll
-      position absolute 
-      right 0
-      font-size $font-small
-      color #BF0F27
-      animation rolling 5s linear infinite
     .title
       position relative
       left .34rem
       display flex
       font-size $font-normal
       color #fff
+      overflow hidden
+      .roll
+        position absolute 
+        right 0
+        font-size $font-small
+        color #BF0F27
+        animation rolling 5s linear infinite
       p
+        display flex
+        align-items center
         background #165AA2
     .item-group
       display flex
@@ -164,6 +164,9 @@ export default {
           display flex
           flex-direction column
           font-size $font-normal
+          .border-right
+            padding 0 .6rem
+            border-right 1px solid #055B7D
           .bar 
             flex 1
             display flex
@@ -171,9 +174,19 @@ export default {
             font-size $font-small
             .el-progress
               flex 1
+              margin 0 .1rem
             .data .data-already
               color #469EAF
-        
+        .item:nth-child(1)
+          .border-right
+            padding-left 0     
+        .item:nth-child(2), .item:nth-child(3)
+          .sub
+            padding-left .6rem
+        .item:nth-child(4)
+          padding-left .6rem
+            
+
 
 </style>  
 
