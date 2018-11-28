@@ -23,7 +23,7 @@
           </div>
           <div :class="index !== 3 ? 'border-right' : null" class="bar" v-for="(each, eachIndex) in item.data" :key="eachIndex">
             <p>{{each.name}}</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="80" :color="item.color"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" :color="item.color"></el-progress>
             <p class="data">
               <span class="data-already">{{each.already}}</span>
               <span class="data-all">/{{each.all}}</span>

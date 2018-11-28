@@ -1,5 +1,20 @@
 <template>
-  <div id="main" style="width: 100%;height:800px;"></div>
+  <div class="map">
+    <div class="title">
+      <img src="../common/img/map-bg.png" alt="">
+      <p>运营</p>
+      <img class="transform" src="../common/img/map-bg.png" alt="">
+      <img src="../common/img/title-left.png" alt="">
+      <p>行政区切换</p>
+      <img src="../common/img/title-right.png" alt="">
+    </div>
+
+    <div class="main">
+      <img src="../common/img/map-left.png" alt="">
+      <div id="map" style="width: 100%; height: 500px"></div>
+      <img src="../common/img/map-right.png" alt="">
+    </div>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -12,13 +27,13 @@ export default {
   },
   components: {},
   mounted() {
-    // this.init()
+    this.init()
   },
   methods: {
     init() {
       const echarts = require("echarts")
       //地图容器
-      var chart = echarts.init(document.getElementById("main"))
+      var chart = echarts.init(document.getElementById("map"))
       //34个省、市、自治区的名字拼音映射数组
       var provinces = {
         //23个省
@@ -65,7 +80,7 @@ export default {
       var special = ["北京", "天津", "上海", "重庆", "香港", "澳门"]
       var mapdata = []
       //绘制全国地图
-      axios.get("http://localhost:8083/map/china.json").then(res => {
+      axios.get("http://localhost:8080/map/china.json").then(res => {
         const d = [],
               data = res.data
 
@@ -85,7 +100,7 @@ export default {
       chart.on("click", function(params) {
         if (params.name in provinces) {
           //如果点击的是34个省、市、自治区，绘制选中地区的二级地图
-          axios.get(`http://localhost:8083/map/province/${provinces[params.name]}.json`).then(res => {
+          axios.get(`http://localhost:8080/map/province/${provinces[params.name]}.json`).then(res => {
             const d = [], data = res.data
             echarts.registerMap(params.name, data)
             for (var i = 0; i < data.features.length; i++) {
@@ -101,7 +116,7 @@ export default {
             renderMap("china", mapdata)
           } else {
             //显示县级地图
-            axios.get(`http://localhost:8083/map/city/${cityMap[params.name]}.json`).then(res => {
+            axios.get(`http://localhost:8080/map/city/${cityMap[params.name]}.json`).then(res => {
               const d = [], data = res.data
               echarts.registerMap(params.name, data)
               for (var i = 0; i < data.features.length; i++) {
@@ -210,4 +225,23 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  .title
+    display flex
+    p
+      display flex
+      align-items center
+    p:nth-of-type(1)
+      color #050230
+      background #00FFFB
+    p:nth-of-type(2)
+      color #459EFF
+      background #1559A0
+    .transform
+      transform rotate(180deg)
+  
+  .main
+    display flex
+    .map
+      flex 1
+      background url('../common/img/map-point.png')
 </style>
