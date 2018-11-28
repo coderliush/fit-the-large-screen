@@ -138,7 +138,8 @@ export default {
 
       //初始化绘制全国地图配置
       var option = {
-        backgroundColor: "#000",
+        // 背景色
+        // backgroundColor: "#000",
         title: {
           text: "",
           subtext: "",
@@ -152,7 +153,7 @@ export default {
           },
           subtextStyle: {
             color: "#ccc",
-            fontSize: 13,
+            fontSize: 0,
             fontWeight: "normal",
             fontFamily: "Microsoft YaHei"
           }
@@ -203,14 +204,14 @@ export default {
               emphasis: {
                 show: true,
                 textStyle: {
-                  color: "#fff",
+                  color: "#000",
                   fontSize: 13
                 }
               }
             },
             itemStyle: {
               normal: {
-                areaColor: "#323c48",
+                areaColor: "#2C6B8E",
                 borderColor: "dodgerblue"
               },
               emphasis: {
@@ -254,6 +255,6 @@ export default {
   
   .main
     display flex
-    .map
+    #map
       background url('../common/img/map-point.png')
 </style>
