@@ -49,7 +49,7 @@ export default {
     this.itemArr = [
       {
       name: '在线设备统计',
-      url: '../common/img/icon/inline.png',
+      url: require('common/img/icon/online.png'),
       color: '#79C171',
       data: [{
         name: '网关',
@@ -57,13 +57,11 @@ export default {
         all: 400,
       },{
         name: '网关',
-        url: '../common/img/icon/outline.png',
         already: 200,
         all: 400,
         color: '#FB62B5'
       },{
         name: '网关',
-        url: '../common/img/icon/operation.png',
         already: 200,
         all: 400,
         color: '#FEAA03'
@@ -71,7 +69,7 @@ export default {
     },
     {
       name: '离线设备统计',
-      url: '../common/img/icon/wheel.png',
+      url: require('common/img/icon/outline.png'),
       color: '#FB62B5',
       data: [{
         name: '网关',
@@ -88,6 +86,7 @@ export default {
       }]
     },{
       name: '维修设备统计',
+      url: require('common/img/icon/operation.png'),
       color: '#FDAC07',
       data: [{
         name: '网关',
@@ -105,6 +104,7 @@ export default {
     },
     {
       name: '未安装设备统计',
+      url: require('common/img/icon/wheel.png'),
       color: '#18ADF5',
       data: [{
         name: '网关',
@@ -133,6 +133,15 @@ export default {
       transform translateY(.4rem)
     100%
       transform translateY(-.5rem)
+
+  .item-wrapper > .item
+    padding .3rem 0
+    .sub
+      display flex
+      img 
+        width .3rem
+        height .3rem
+        margin-right .1rem
 
   .progress
     position relative
