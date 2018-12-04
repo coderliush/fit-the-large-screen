@@ -1,0 +1,1 @@
+export const PREV_DATA = 'PREV_DATA'

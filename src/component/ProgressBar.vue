@@ -3,7 +3,7 @@
     <div class="title">
       <img src="../common/img/title-left.png" alt="">
       <p>
-        <img src="../common/img/icon/bulb.png" alt="">
+        <img src="../common/img/icon/bulb.png" alt="" style="margin-right: .1rem">
         <span>设备装填-【全国/运营管理本部】</span>
       </p>
       <img src="../common/img/title-right.png" alt="">
