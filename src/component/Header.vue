@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="title">青客物联网监控面板v1.0.0.0</div>
+    <div class="title">青客物联网监控面板V1.0.0.0</div>
   </div>
 </template>
 
@@ -22,8 +22,9 @@ export default {
     justify-content center
     background url('../common/img/header.png') 
     background-size 100% 100%
-    padding .3rem
+    padding 28px
     color $color-active
+    letter-spacing 2px
     .title 
       font-size $font-big 
       font-weight bold

@@ -1,13 +1,7 @@
 <template>
   <div class="progress">
     <div class="title">
-      <img src="../common/img/title-left.png" alt="">
-      <p>
-        <img src="../common/img/icon/bulb.png" alt="" style="margin-right: .1rem">
-        <span>设备装填-【全国/运营管理本部】</span>
-      </p>
-      <img src="../common/img/title-right.png" alt="">
-
+      <p>设备装填-【全国/运营管理本部】</p>
       <div class="roll">
         <img src="../common/img/icon/notice.png" alt="">
           告警区域：当下XX设备/发生【数量】【状态】/【滚动】
@@ -130,18 +124,21 @@ export default {
 @import '~common/stylus/variable'
   @keyframes rolling 
     0% 
-      transform translateY(.4rem)
+      transform translateY(40px)
     100%
-      transform translateY(-.5rem)
+      transform translateY(-30px)
 
   .item-wrapper > .item
-    padding .3rem 0
+    padding 20px 0
+    color #92D5FF
     .sub
       display flex
+      align-items center
+      font-weight bold
       img 
-        width .3rem
-        height .3rem
-        margin-right .1rem
+        width 24px
+        height 24px
+        margin-right 15px
 
   .progress
     position relative
@@ -159,9 +156,9 @@ export default {
         color #BF0F27
         animation rolling 5s linear infinite
       p
-        display flex
-        align-items center
-        background #165AA2
+        height 32px
+        line-height 32px
+        background #1559A0  
     .item-group
       display flex
       .item-wrapper
@@ -183,9 +180,9 @@ export default {
             font-size $font-small
             .el-progress
               flex 1
-              margin 0 .1rem
+              margin 0 15px
             .data .data-already
-              color #469EAF
+              color #01FAFE
         .item:nth-child(1)
           .border-right
             padding-left 0     

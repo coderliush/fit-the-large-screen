@@ -1,5 +1,7 @@
 const state = {
-  prevData: {}
+  chinaData: {},
+  prevData: {},
+  backToChina: true
 }
 
 export default state

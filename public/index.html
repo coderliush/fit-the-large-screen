@@ -21,29 +21,23 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 
-  <script>
-    // 基准大小
-    const baseSize = 32
-    // 设置 rem 函数
-    function setRem() {
-      // 当前页面宽度相对于 750 宽的缩放比例，可根据自己需要修改。
-      const scale = document.documentElement.clientWidth / 750
-      // 设置页面根节点字体大小
-      document.documentElement.style.fontSize = baseSize * Math.min(scale, 2) + 'px'
-    }
-    // 初始化
-    setRem()
-    // 改变窗口大小时重新设置 rem
-    window.onresize = function () {
-      setRem()
+  <!-- <script>
+    function setRap() {
       var wrapper = document.querySelector('.wrapper')
-      var rap = document.body.clientWidth / 1920 || 1
+      console.log('document.body.clientWidth', document.body.clientWidth)
+      var rap = document.body.clientWidth / 1903 || 1
       wrapper.style.width = '1920px'
       wrapper.style.height = '1380px'
       wrapper.style.transformOrigin = '0 0'
       wrapper.style.transform = 'scale(' + rap + ',' + rap + ')'
     }
-  </script>
+    window.onload = function () {
+      setRap()
+    }
+    window.onresize = function () {
+      setRap()
+    }
+  </script> -->
 </body>
 
 </html>   

@@ -33,12 +33,12 @@ export default {
 
 <style scoped lang="stylus">
     .container
-      padding 0 2rem
+      padding 0 300px
       .layout
         display flex
         margin-top 2%
         .left, .right
-          flex 1
+          width 50%
 </style>
 
 
