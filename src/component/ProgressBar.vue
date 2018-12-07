@@ -1,30 +1,139 @@
 <template>
   <div class="progress">
     <div class="title">
+      <img src="../common/img/title-left.png" alt="">
       <p>设备装填-【全国/运营管理本部】</p>
       <div class="roll">
         <img src="../common/img/icon/notice.png" alt="">
           告警区域：当下XX设备/发生【数量】【状态】/【滚动】
       </div>
+      <img src="../common/img/title-right.png" alt="">
     </div>
-    <div class="item-group">
+    <div class="count-group">
       <img src="../common/img/border-left.png" alt="">
-      <div class="item-wrapper">
-        <div class="item" v-for="(item, index) in itemArr" :key="index">
+        <div class="item">
           <div class="sub">
-            <img :src="item.url" alt="">
-            <p>{{item.name}}</p>
+            <img src="../common/img/icon/online.png" alt="">
+            <p>在线设备统计</p>
           </div>
-          <div :class="index !== 3 ? 'border-right' : null" class="bar" v-for="(each, eachIndex) in item.data" :key="eachIndex">
-            <p>{{each.name}}</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" :color="item.color"></el-progress>
+          <div class="bar">
+            <p>网关</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
             <p class="data">
-              <span class="data-already">{{each.already}}</span>
-              <span class="data-all">/{{each.all}}</span>
+              <span class="data-already">{{Cmbox.onlinenums}}</span>
+              <span class="data-all">/{{Cmbox.totalnums}}</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p>电表</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">{{meterbox.onlinenums}}</span>
+              <span class="data-all">/{{meterbox.totalnums}}</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p class="label">锁</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">{{lock.onlinenums}}</span>
+              <span class="data-all">/{{lock.totalnums}}</span>
             </p>
           </div>
         </div>
-      </div>
+
+        <div class="item">
+          <div class="sub">
+            <img src="../common/img/icon/online.png" alt="">
+            <p>离线设备统计</p>
+          </div>
+          <div class="bar">
+            <p>网关</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">{{Cmbox.offlinenums}}</span>
+              <span class="data-all">/{{Cmbox.totalnums}}</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p>电表</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already"></span>
+              <span class="data-all">/</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p class="label">锁</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">200</span>
+              <span class="data-all">/400</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="sub">
+            <img src="../common/img/icon/online.png" alt="">
+            <p>维修设备统计</p>
+          </div>
+          <div class="bar">
+            <p>网关</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">200</span>
+              <span class="data-all">/400</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p>电表</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">200</span>
+              <span class="data-all">/400</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p class="label">锁</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">200</span>
+              <span class="data-all">/400</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="sub">
+            <img src="../common/img/icon/online.png" alt="">
+            <p>未安装设备统计</p>
+          </div>
+          <div class="bar">
+            <p>网关</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">{{onLine.notinstallednums}}</span>
+              <span class="data-all">/{{onLine.totalnums}}</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p>电表</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">200</span>
+              <span class="data-all">/400</span>
+            </p>
+          </div>
+          <div class="bar">
+            <p class="label">锁</p>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <p class="data">
+              <span class="data-already">200</span>
+              <span class="data-all">/400</span>
+            </p>
+          </div>
+        </div>
       <img src="../common/img/border-right.png" alt="">
     </div>
   </div>
@@ -35,86 +144,24 @@ export default {
   name: "progressbar",   
   data() {
     return {
-      itemArr: [], 
-    };
+      Cmbox: [],
+    }
   },
   components: {},
   mounted() {
-    this.itemArr = [
-      {
-      name: '在线设备统计',
-      url: require('common/img/icon/online.png'),
-      color: '#79C171',
-      data: [{
-        name: '网关',
-        already: 200,
-        all: 400,
-      },{
-        name: '网关',
-        already: 200,
-        all: 400,
-        color: '#FB62B5'
-      },{
-        name: '网关',
-        already: 200,
-        all: 400,
-        color: '#FEAA03'
-      }]
+    this.init(0)
+  },
+  methods: {
+    flush() {
+      this.init()
     },
-    {
-      name: '离线设备统计',
-      url: require('common/img/icon/outline.png'),
-      color: '#FB62B5',
-      data: [{
-        name: '网关',
-        already: 200,
-        all: 400,
-      },{
-        name: '网关',
-        already: 200,
-        all: 400
-      },{
-        name: '网关',
-        already: 200,
-        all: 400
-      }]
-    },{
-      name: '维修设备统计',
-      url: require('common/img/icon/operation.png'),
-      color: '#FDAC07',
-      data: [{
-        name: '网关',
-        already: 200,
-        all: 400
-      },{
-        name: '网关',
-        already: 200,
-        all: 400
-      },{
-        name: '网关',
-        already: 200,
-        all: 400
-      }]
-    },
-    {
-      name: '未安装设备统计',
-      url: require('common/img/icon/wheel.png'),
-      color: '#18ADF5',
-      data: [{
-        name: '网关',
-        already: 200,
-        all: 400
-      },{
-        name: '网关',
-        already: 200,
-        all: 400
-      },{
-        name: '网关',
-        already: 200,
-        all: 400
-      }]
+    init(id) {
+      const Cmbox = this.$http.post('/dmp/api/Cmbox/Count', id) 
+      const Meterbox = this.$http.post('/dmp/api/Meterbox/Count', id)
+      const lock = this.$http.post('/dmp/api/Lock/Count', id)
+      this.Cmbox = Cmbox[0]
+      this.Meterbox = Meterbox[0]
     }
-    ]
   }
 };
 </script>
@@ -128,23 +175,11 @@ export default {
     100%
       transform translateY(-30px)
 
-  .item-wrapper > .item
-    padding 20px 0
-    color #92D5FF
-    .sub
-      display flex
-      align-items center
-      font-weight bold
-      img 
-        width 24px
-        height 24px
-        margin-right 15px
-
   .progress
     position relative
     .title
       position relative
-      left .34rem
+      left 22px
       display flex
       font-size $font-normal
       color #fff
@@ -159,39 +194,42 @@ export default {
         height 32px
         line-height 32px
         background #1559A0  
-    .item-group
+    .count-group
       display flex
-      .item-wrapper
+      .item
         flex 1
         display flex
+        flex-direction column
+        padding 34px 0
+        font-size $font-normal
         background url('../common/img/border.png')
-        .item
+        .sub
+          display flex
+          img 
+            margin-right 14px
+        .bar 
           flex 1
           display flex
-          flex-direction column
-          font-size $font-normal
-          .border-right
-            padding 0 .6rem
-            border-right 1px solid #055B7D
-          .bar 
+          align-items center
+          padding-right 20px
+          border-right 2px solid #064168
+          font-size $font-small
+          .label
+            width 28px
+          .el-progress
             flex 1
-            display flex
-            align-items center
-            font-size $font-small
-            .el-progress
-              flex 1
-              margin 0 15px
-            .data .data-already
-              color #01FAFE
-        .item:nth-child(1)
-          .border-right
-            padding-left 0     
-        .item:nth-child(2), .item:nth-child(3)
-          .sub
-            padding-left .6rem
-        .item:nth-child(4)
-          padding-left .6rem
-            
+            margin 0 15px
+          .data .data-already
+            color #01FAFE 
+      .item:nth-of-type(2)
+        padding-left 20px
+        padding-right 20px
+      .item:nth-of-type(4)
+        padding-left 20px
+        padding-right 20px
+        .bar
+          border none
+      
 
 
 </style>  

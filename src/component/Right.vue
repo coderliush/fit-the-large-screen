@@ -1,28 +1,67 @@
 <template>
   <div class="map">
     <div class="title">
-      <div class="part1">
-        <img src="../common/img/map-bg.png" alt>
-        <p>运营</p>
-        <img src="../common/img/map-bg.png" alt>
-      </div>
-      <div class="part2">
-        <img src="../common/img/title-left.png" alt>
-        <p>行政区切换</p>
-        <img src="../common/img/title-right.png" alt>
-      </div>
+      <div class="tab1" @click="tab1" :class="isActive ? 'active' : null"><p>运营</p></div>
+      <div class="tab2" @click="tab2" :class="!isActive ? 'active' : null"></div>
     </div>
-
     <div class="main">
       <img src="../common/img/map-left.png" alt>
-      <img class="back" src="../common/img/icon/back.png" @click="back" alt="">
-      <div id="map" style="width: 100%;"></div>
-      <div class="footer">
-        <div class="item" v-for="(item, index) in mapArr" :key="index">
-          <img :src="item.url" alt="">
-          <div>
-            <p>门禁数据</p>
-            <p>{{item.num}}</p>
+      <div class="container">
+        <div class="select-wrapper">
+          <div class="select1" v-show="isActive">
+            
+          </div>
+
+          <div class="select2" v-show="!isActive">
+            <el-select
+              v-for="(districts,index) in districtselesctoptions"
+              :key="index"
+              v-model="districtselescts[index]"
+              @change="SelectChange(index,districtselescts[index])"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="(district,j) in districts"
+                :key="j"
+                :label="district.name"
+                :value="district.id"
+              >
+              </el-option>
+            </el-select>
+            <el-select v-if="villageoptions" v-model="villageselect" @change="SelectVillage(villageselect)" >
+              <el-option
+                  v-for="(village,i) in villageoptions"
+                  :key="i"
+                  :label="village.name"
+                  :value="village.id">
+                </el-option>
+            </el-select>
+            <el-select v-if="celloptions" v-model="cellselect" @change="SelectCell(cellselect)" >
+              <el-option
+                  v-for="(cell,i) in celloptions"
+                  :key="i"
+                  :label="cell.address"
+                  :value="cell.id">
+                </el-option>
+            </el-select>
+          </div>
+        </div>
+        <p class="header">运营管理本部</p>
+        <div class="body">
+          <div id="map" v-show="!showtype"></div>
+          <RegionDetail :type="showtype" v-show="showtype"></RegionDetail>
+        </div>
+        <div class="count">
+          <p><span>全国公寓总数：</span><span>1888</span></p>
+          <p><span>全国公寓总数：</span><span>1888</span></p>
+        </div>
+        <div class="footer">
+          <div class="item" v-for="(item, index) in mapArr" :key="index">
+            <img :src="item.url" alt>
+            <div>
+              <p>门禁数据</p>
+              <p>{{item.num}}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -33,32 +72,162 @@
 
 <script type="text/ecmascript-6">
 import axios from "axios";
+import RegionDetail from './RegionDetail'
 export default {
   name: "",
-
+  components: {
+    RegionDetail
+  },
   data() {
     return {
-      mapArr: [{
-        url: require('common/img/icon/mark1.png'),
-        num: '132.456.79'
-      },{
-        url: require('common/img/icon/mark2.png'),
-        num: '132.456.79'
-      },{
-        url: require('common/img/icon/mark3.png'),
-        num: '132.456.79'
-      },{
-        url: require('common/img/icon/mark4.png'),
-        num: '132.456.79'
-      }]
-    }
+      isActive: false,
+      mapArr: [
+        {
+          url: require("common/img/icon/mark1.png"),
+          num: "132.456.79"
+        },
+        {
+          url: require("common/img/icon/mark2.png"),
+          num: "132.456.79"
+        },
+        {
+          url: require("common/img/icon/mark3.png"),
+          num: "132.456.79"
+        },
+        {
+          url: require("common/img/icon/mark4.png"),
+          num: "132.456.79"
+        }
+      ],
+      options: [{
+          value: 0,
+          label: '显示地图'
+        }, {
+          value: 1,
+          label: '显示小区'
+        }, {
+          value: 2,
+          label: '显示单元'
+        }],
+      showtype: 0,//显示类型 0显示地图 1显示小区 2显示单元
+      cityname: "",
+      orgselescts: [], //组织架构选择的值
+      orgselesctoptions: [], //组织架构下拉绑定的列表
+      districtselescts: [], //行政区选择的值
+      districtselesctoptions: [], //行政区下拉绑定的列表
+      villageselect: null,
+      villageoptions: null,
+      cellselect: null,
+      celloptions: null
+    };
   },
-  components: {},
-  mounted() {
-    setTimeout(() => this.init(),300)
+  async mounted() {
+    const getdistrict = this.$http.get('/dmp/api/Map/Query');
+    const getorg = this.$http.get('/dmp/api/Org/Query');
+    this.districts = await getdistrict;
+    this.districtselesctoptions.push([{id:0,name:'全部'},...this.districts.filter(d=>{
+      if(d.name=='上海市'){
+        return d.parrentid!==0;
+      }
+      return d.parrentid===0;
+    })]);
+    this.districtselescts.push(0);
+    this.orgs = await getorg;
+    this.init();
+    //this.SelectChange(0,0);
+    // setTimeout(() => this.init(), 300);
   },
   methods: {
+    tab1() {
+      this.isActive = true;
+    },
+    tab2() {
+      this.isActive = false;
+    },
+    //下拉选择事件
+    async SelectChange(index, id) {
+      this.$emit('nodechange',id);
+      this.showtype=0;//显示地图
+      this.villageselect = null;//清除小区选择
+      this.cellselect = null;//清除单元选择
+      this.celloptions = null;//清除单元选择
+      if (!this.isActive) {//行政区域
+        this.districtselescts.length = index + 1;
+        this.districtselesctoptions.length = index + 1;
+        if(id==0){
+          this.villageoptions =null;//小区选择清除
+          await this.wait();//等待vue更新dom
+          const datalist = this.districtselesctoptions[index].filter(item=>item.id!=0).map(item=> {return {name:item.name,value:1,lng:item.lng,lat:item.lat};});
+          if(index!=0){
+            var node = this.districts.find(item=>item.id==this.districtselescts[index-1]);
+            this.InitMap(node.name,datalist,node);//刷新地图
+          }
+          else{
+            this.InitMap("中国",datalist,null);//刷新地图
+          }
+          return;
+        }
+        var node = this.districts.find(item=>item.id==id);
+        if (node.isleaf) {
+          //this.InitMap(node.name,[],node);
+          const villageoptions = await this.$http.get(`/dmp/api/Map/QueryVillage/${id}`);
+          this.villageoptions = [{id:0,name:'全部'}, ...villageoptions];//小区选择赋值
+          const datalist = villageoptions.map(item=> {return {name:item.name,value:1,lng:item.lng,lat:item.lat};});
+          this.InitMap(node.name,datalist,node);//刷新地图
+        } else {
+          this.villageoptions = null;//小区选择清除
+          await this.wait();//等待vue更新dom
+          const nextselects = this.districts.filter(v => v.parrentid == node.id);
+          this.districtselescts.push(0);
+          this.districtselesctoptions.push([{id:0,name:'全部'}, ...nextselects]);
+          const datalist = nextselects.map(item=> {return {name:item.name,value:1,lng:item.lng,lat:item.lat};});
+          this.InitMap(node.name,datalist,node);//刷新地图
+        }
+      } else {
+        this.orgselescts.length = index + 1;
+        this.orgselesctoptions.length = index + 1;
+        var node = this.districts.find(item=>item.id==id);
+        if (node.isleaf) {
+          //选择服务中心时 查询小区
+        } else {
+          const nextselects = this.orgs.filter(v => v.parrentid == node.id);
+          this.orgselescts.push(0);
+          this.orgselesctoptions.push([{id:0,name:'全部'}, ...nextselects]);
+        }
+      }
+    },
+    async SelectVillage(id){
+       this.cellselect = null;//清除单元选择
+       var village = this.villageoptions.find(item=>item.id==id);
+        if(id==0){//选择全部
+          this.showtype=0;
+          this.celloptions = null;//清除单元选择
+        }
+        else{
+          this.showtype=1;
+          const celloptions = await this.$http.get(`/dmp/api/Map/QueryCell/${id}`);
+          this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
+        }
+    },
+    async SelectCell(id){
+       if(id==0){//选择全部
+          this.showtype=1;
+        }
+        else{
+          this.showtype=2;
+          //const celloptions = await this.$http.get(`/dmp/api/Map/QueryCell/${id}`);
+          //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
+        }
+    },
+    wait (){
+      return new Promise((reslove,reject)=>{
+        setTimeout(reslove,100);
+      })
+    },
     init() {
+      // this.orgs = []; //5级架构数据数据
+      // this.districts = []; //行政区数据
+
       this.dimensions = null; //缓存计算的缩放级别
       this.myChart = null; //echart控件
       this.bMap = null; //当前百度地图控件
@@ -77,63 +246,34 @@ export default {
 
       this.myChart = echarts.init(mapdiv);
       this.curLevel = 1;
-      this.myChart.on("click", params => {
-        const e = params.event.event;
-        e.stopPropagation();
-        e.preventDefault();
-        this.curLevel++;
-        //this.bMap.clearOverlays();
+      // this.myChart.on("click", params => {
+      //   const e = params.event.event;
+      //   e.stopPropagation();
+      //   e.preventDefault();
+      //   this.curLevel++;
+      //   //this.bMap.clearOverlays();
 
-        this.lastCityNames.push(this.curCityName);
-        this.curCityName = params.data.name;
-        this.InitMap(this.curCityName);
-      });
+      //   this.lastCityNames.push(this.curCityName);
+      //   this.curCityName = params.data.name;
+      //   this.InitMap(this.curCityName);
+      // });
       this.curCityName = "中国";
-      this.InitMap(this.curCityName);
+      //this.InitMap(this.curCityName);
+      this.SelectChange(0,0);
     },
-    async InitMap(cityname) {
-      if (this.curlay) this.bMap.removeOverlay(this.curlay); //删除当前图层
-      if (!this.CityData[cityname])
-        this.CityData[cityname] = this.GetData(cityname);
-
-      var data = [
-        { name: "上海市", value: 60000 },
-        { name: "江苏省", value: 30000 },
-        { name: "浙江省", value: 10000 },
-        { name: "北京市", value: 1000 },
-
-        { name: "湖北省", value: 10000 }
-      ];
-      if (cityname == "江苏省") {
-        data = [
-          { name: "苏州市", value: 6000 },
-          { name: "南京市", value: 6000 }
-        ];
-      }
-      else if (cityname == "上海市") {
-        data = [
-          { name: "黄浦区", value: 6000 },
-          { name: "宝山区", value: 6000 },
-          { name: "浦东新区", value: 6000 }
-        ];
-      }
-
-      const needawaits = [];
-      for (let i = 0; i < data.length; i++) {
-        const cname = data[i].name;
-        if (!this.CityData[cname]) {
-          this.CityData[cname] = this.GetData(cname);
-          needawaits.push(this.CityData[cname]);
-        }
-      }
-      for (let i = 0; i < needawaits.length; i++) {
-        await needawaits[i];
-      }
-
+    async InitMap(cityname,datalist,node) {
+      if (!this.CityData[cityname]&&!this.CityData[cityname]!==null)
+        this.CityData[cityname] = this.GetData(cityname,node);
       const points = await this.CityData[cityname]; //获取城市边界遮挡数据
-      const pcenter = this.CityCenter[cityname]; //地图显示区域中心
-      let zoom = this.getZoom(cityname);
 
+      // const pcenter = this.CityCenter[cityname]; //地图显示区域中心
+      let view = this.getZoom(cityname,datalist);
+      this.$zoom = view.zoom;
+      this.$center = view.center;
+      if(this.CityCenter[cityname]) this.$center =this.CityCenter[cityname];
+
+      var serietype = 'effectScatter';
+      if(this.villageoptions) serietype='scatter';
       var option = {
         // backgroundColor: '#404a59',
         title: {
@@ -150,8 +290,8 @@ export default {
           trigger: "item"
         },
         bmap: {
-          center: [pcenter.lng, pcenter.lat],
-          zoom: zoom,
+          center: [this.$center.lng, this.$center.lat],
+          zoom: this.$zoom,
           enableMapClick: false,
           roam: true,
           mapStyle: {
@@ -289,13 +429,13 @@ export default {
         },
         series: [
           {
-            name: "Top 5",
-            type: "effectScatter",
+            // name: "Top 5",
+            type: serietype,//"effectScatter",
             coordinateSystem: "bmap",
             // data: this.convertData(data.sort(function (a, b) {
             //     return b.value - a.value;
             // }).slice(0, 10)),
-            data: this.convertData(data),
+            data: this.convertData(datalist),
             symbolSize: function(val) {
               return 10;
             },
@@ -324,38 +464,49 @@ export default {
           }
         ]
       };
+
+      if (this.curlay) this.bMap.removeOverlay(this.curlay); //删除当前图层
       this.myChart.clear();
-      this.myChart.setOption(option);
+      const mapdiv = document.getElementById("map");
+      for (var i = mapdiv.children.length - 2; i > -1; i--) {
+        //移除上次echart生成的dom
+        if (mapdiv.children[i].class != "ec-extension-bmap")
+          mapdiv.removeChild(mapdiv.children[i]);
+      }
 
+      this.myChart.setOption(option); //重新设置参数
       var ecModel = this.myChart["_model"];
-
       let map;
       ecModel.eachComponent("bmap", function(bmapModel) {
         map = bmapModel.__bmap; //由echart实例获取百度地图的实例
         map.disableDoubleClickZoom(); //去掉双击放大事件
         map.disablePinchToZoom();
-        //map.disableScrollWheelZoom();
+        map.disableScrollWheelZoom();
+        map.disableDragging();
+        map.disableInertialDragging();
       });
       this.bMap = map;
 
-      this.curlay = new BMap.Polygon(points, {
-        strokeColor: "none",
-        fillColor: "#080E3E",
-        fillOpacity: 1,
-        strokeOpacity: 0.5
-      }); //建立多边形覆盖物
-      this.bMap.addOverlay(this.curlay); //添加覆盖物"#080E3E"
-
-      if (cityname === "中国") {
-        this.bMap.disableScrollWheelZoom();
-        this.bMap.disableDragging();
-        this.bMap.setMinZoom(5);
-      } else {
-        this.bMap.enableScrollWheelZoom();
-        this.bMap.enableDragging();
-        this.bMap.setMinZoom(zoom);
-        //this.bMap.setZoom(this.getZoom(cityname))
+      if(points){
+        this.curlay = new BMap.Polygon(points, {
+          strokeColor: "none",
+          fillColor: "#080E3E",
+          fillOpacity: 1,
+          strokeOpacity: 0.5
+        }); //建立多边形覆盖物
+        this.bMap.addOverlay(this.curlay); //添加覆盖物"#080E3E"
       }
+
+      // if (cityname === "中国") {
+      //   this.bMap.disableScrollWheelZoom();
+      //   this.bMap.disableDragging();
+      //   this.bMap.setMinZoom(5);
+      // } else {
+      //   this.bMap.enableScrollWheelZoom();
+      //   this.bMap.enableDragging();
+      //   this.bMap.setMinZoom(zoom);
+      //   //this.bMap.setZoom(this.getZoom(cityname))
+      // }
     },
     back() {
       if (!this.lastCityNames.length) return;
@@ -364,16 +515,16 @@ export default {
       this.InitMap(lastCity);
     },
     //获取城市数据
-    GetData(cityname) {
+    GetData(cityname,node) {
       return new Promise((resolve, reject) => {
         const bdary = new BMap.Boundary();
         bdary.get(cityname, rs => {
-          resolve(this.getrect(rs, cityname));
+          resolve(this.getrect(rs, cityname,node));
         });
       });
     },
     //获取遮布数据并缓存 原有边界数据，以及计算中心，显示范围
-    getrect(rs, cityname) {
+    getrect(rs, cityname,node) {
       const blist = rs.boundaries;
 
       const pcentor = new BMap.Point(0, 0);
@@ -411,7 +562,7 @@ export default {
         }
 
         //将闭合区域加到遮蔽层上，每次添加完后要再加一次西北角作为下次添加的起点和最后一次的终点
-        if (points.length > 200 || blist.length===1) {
+        if (points.length > 200 || blist.length === 1) {
           pArray.push(...points, pArray[0]);
           boundary.push(...points);
           //计算
@@ -431,30 +582,45 @@ export default {
       maxy++;
       pcentor.lng = (minx + maxx) / 2;
       pcentor.lat = (miny + maxy) / 2;
-
-      this.CitySW[cityname] = new BMap.Point(minx, miny);
-      this.CityNE[cityname] = new BMap.Point(maxx, maxy);
-      this.CityBoundaryData[cityname] = boundary;
+      if(blist.length){
+        this.CitySW[cityname] = new BMap.Point(minx, miny);
+        this.CityNE[cityname] = new BMap.Point(maxx, maxy);
+        this.CityBoundaryData[cityname] = boundary;
+      }
+      else{
+        this.CitySW[cityname] = null;
+        this.CityNE[cityname] = null;
+        this.CityBoundaryData[cityname] = null;
+      }
+      
       if (cityname == "中国") {
+        pcentor.lng = 104.114129;
+        pcentor.lat = 20.550339;
         this.CityCenter[cityname] = new BMap.Point(104.114129, 37.550339); //中国中心
       } else {
-        this.CityCenter[cityname] = pcentor;
+        // this.CityCenter[cityname] = pcentor;
+        this.CityCenter[cityname] = new BMap.Point(node.lng, node.lat);
       }
       return pArray;
     },
     //根据经纬极值计算绽放级别。
-    getZoom(cityname) {
-      if (!this.bMap) return 5;
-      if (cityname === "中国") return 5;
-      var view = this.bMap.getViewport(this.CityBoundaryData[cityname]);
-      return view.zoom;
+    getZoom(cityname,datalist) {
+      if (!this.bMap) return {center:new BMap.Point(104.114129, 37.550339),zoom:5};
+      if (cityname === "中国") return {center:new BMap.Point(104.114129, 37.550339), zoom:5};
+      if(this.CityBoundaryData[cityname]){//有边界数据 按边界数计算
+        return this.bMap.getViewport(this.CityBoundaryData[cityname]);
+      }
+      else{//没有边界数据 按展示的点计算
+        var points = datalist.map(p => new BMap.Point(p.lng, p.lat));
+        return this.bMap.getViewport(points);
+      }
     },
-
     convertData(data) {
       var res = [];
       for (var i = 0; i < data.length; i++) {
-        const p = this.CityCenter[data[i].name];
-        var geoCoord = [p.lng, p.lat];
+        var geoCoord = [data[i].lng, data[i].lat];
+        // const p = this.CityCenter[data[i].name];
+        // var geoCoord = [p.lng, p.lat];
         // var geoCoord = this.geoCoordMap[data[i].name];
         if (geoCoord) {
           res.push({
@@ -464,80 +630,141 @@ export default {
         }
       }
       return res;
-    }
+    },
+    //选择 行政区(true)，组织架构(false)
+    SelectTab(isdistrict) {
+      this.$isdistrict = isdistrict;
+    },
+    
   }
 };
 </script>
 
 <style scoped lang="stylus">
-@import '~common/stylus/variable.styl'
-.title 
-  display flex
+@import '~common/stylus/variable.styl';
 
-  .part1, .part2 
-    display flex
+.title {
+  display: flex;
+  position: relative;
+  left: 40px;
+  .tab1.active {
+    color: #050230 !important;
+    background: #00FFFB !important;
+  }
+  .tab2.active {
+    color: #050230 !important;
+    background: #fff !important;
+    border-bottom:30px solid #00FFFB!important;
+  }
 
-  .part1 
-    position relative
-    left 0.4rem
 
-    > p 
-      display flex
-      align-items center
-      color #050230
-      background #00FFFB
+  .tab1 {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index:999;
+    padding: 0 20px;
+    transform: skew(-45deg)
+    color: #459EFF;
+    background: #1559A0;
+    cursor: pointer;
+    > p {
+      transform: skew(45deg);
+    }
+  }
 
-    > img:nth-of-type(2) 
-      transform rotate(180deg)
+  .tab2 {
+    position: relative;
+    left: -14px;
+    width:100px;
+    height:0;
+    border-bottom:30px solid #1559A0;
+    border-left:30px solid transparent;
+    border-top-right-radius: 6px;
+    cursor: pointer;
+    &::before {
+      content: "行政区切换";
+			position: absolute;
+			top: 8px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 1;
+			background: red;
+    }
+  }
+}
 
-  .part2 
-    position relative
-    right 0.06rem
-    > p 
-      display flex
-      align-items: center
-      color #459EFF
-      background #1559A0
+.main {
+  display: flex;
+  position: relative;
+  .container {
+    flex: 1;
+    border-top: 1px solid #2F93C1;
+    border-bottom: 1px solid #2F93C1;
+    .select-wrapper {
+      margin: 10px;
+      .el-select {
+        width: 100px;
+        margin: 10px 10px;
+      }
+    }
+    .header {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .body {
+        width: 800px;
+        height: 600px;
+        border: 10px solid #1F406A;
+      #map {
+        width: 800px;
+        height: 600px;
+      }
+      .community {
+        display: flex;
+        img {
+          width: 400px;
+        }
+      }
+    }
+    .count {
+      position: relative;
+      top: -78px;
+      left: 40px;
+      p {
+        margin-bottom: 10px;
+        span:nth-of-type(2) {
+          color: $color-active
+        }
+      }  
+    }
+  }
 
-.main 
-  display flex
-  position relative
-  .back
-    position absolute
-    z-index 99
-    width .3rem
-    height .3rem
-    top .6rem
-    right .6rem
-    padding .1rem
-    background #1F4169
-    cursor pointer
-  #map 
-    padding .1rem 0
-    background: url('../common/img/map-point.png')
-  .footer
-    display flex
-    position absolute 
-    left 0
-    right 0
-    bottom .2rem
-    .item
-      flex 1
-      display flex
-      justify-content center
-      img
-        width .5rem
-        height .5rem
-        margin-right .1rem
-      div
-        display flex
-        flex-direction column
-        justify-content center
-        p:nth-child(1)
-          font-size $font-small
-          margin-bottom .05rem
-        p:nth-child(2)
-          color $color-active
-
+  .footer {
+    display: flex;
+    margin: 20px 0;
+    .item {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      img {
+        margin-right: 10px;
+      }
+      div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        p:nth-child(1) {
+          font-size: $font-small;
+          margin-bottom: 0.05rem;
+        }
+        p:nth-child(2) {
+          color: $color-active;
+        }
+      }
+    }
+  }
+}
 </style>
 

@@ -21,23 +21,23 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 
-  <!-- <script>
+  <script>
     function setRap() {
       var wrapper = document.querySelector('.wrapper')
-      console.log('document.body.clientWidth', document.body.clientWidth)
-      var rap = document.body.clientWidth / 1903 || 1
+      var rap = document.body.clientWidth / 1920 || 1
       wrapper.style.width = '1920px'
       wrapper.style.height = '1380px'
       wrapper.style.transformOrigin = '0 0'
       wrapper.style.transform = 'scale(' + rap + ',' + rap + ')'
     }
     window.onload = function () {
-      setRap()
+      // setRap()
     }
+    // 改变窗口大小时重新设置 rem
     window.onresize = function () {
       setRap()
     }
-  </script> -->
+  </script>
 </body>
 
 </html>   
