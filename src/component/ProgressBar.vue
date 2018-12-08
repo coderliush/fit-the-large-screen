@@ -20,8 +20,8 @@
             <p>网关</p>
             <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
             <p class="data">
-              <span class="data-already">{{Cmbox.onlinenums}}</span>
-              <span class="data-all">/{{Cmbox.totalnums}}</span>
+              <span class="data-already">{{cmbox.onlinenums}}</span>
+              <span class="data-all">/{{cmbox.totalnums}}</span>
             </p>
           </div>
           <div class="bar">
@@ -44,93 +44,93 @@
 
         <div class="item">
           <div class="sub">
-            <img src="../common/img/icon/online.png" alt="">
+            <img src="../common/img/icon/outline.png" alt="">
             <p>离线设备统计</p>
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#FF65B9"></el-progress>
             <p class="data">
-              <span class="data-already">{{Cmbox.offlinenums}}</span>
-              <span class="data-all">/{{Cmbox.totalnums}}</span>
+              <span class="data-already">{{cmbox.offlinenums}}</span>
+              <span class="data-all">/{{cmbox.totalnums}}</span>
             </p>
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#FF65B9"></el-progress>
             <p class="data">
-              <span class="data-already"></span>
-              <span class="data-all">/</span>
+              <span class="data-already">{{meterbox.offlinenums}}</span>
+              <span class="data-all">/{{meterbox.totalnums}}</span>
             </p>
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#FF65B9"></el-progress>
             <p class="data">
-              <span class="data-already">200</span>
-              <span class="data-all">/400</span>
+              <span class="data-already">{{lock.offlinenums}}</span>
+              <span class="data-all">/{{lock.totalnums}}</span>
             </p>
           </div>
         </div>
 
         <div class="item">
           <div class="sub">
-            <img src="../common/img/icon/online.png" alt="">
+            <img src="../common/img/icon/operation.png" alt="">
             <p>维修设备统计</p>
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#FDAE0B"></el-progress>
             <p class="data">
-              <span class="data-already">200</span>
-              <span class="data-all">/400</span>
+              <span class="data-already">{{cmboxRepaired.repairenums}}</span>
+              <span class="data-all">/{{cmboxRepaired.totals}}</span>
             </p>
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#FDAE0B"></el-progress>
             <p class="data">
-              <span class="data-already">200</span>
-              <span class="data-all">/400</span>
+              <span class="data-already">{{meterboxRepaired.repairenums}}</span>
+              <span class="data-all">/{{meterboxRepaired.totals}}</span>
             </p>
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#FDAE0B"></el-progress>
             <p class="data">
-              <span class="data-already">200</span>
-              <span class="data-all">/400</span>
+              <span class="data-already">{{lockRepaired.repairenums}}</span>
+              <span class="data-all">/{{lockRepaired.totals}}</span>
             </p>
           </div>
         </div>
 
         <div class="item">
           <div class="sub">
-            <img src="../common/img/icon/online.png" alt="">
+            <img src="../common/img/icon/wheel.png" alt="">
             <p>未安装设备统计</p>
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#20A9F9"></el-progress>
             <p class="data">
-              <span class="data-already">{{onLine.notinstallednums}}</span>
-              <span class="data-all">/{{onLine.totalnums}}</span>
+              <span class="data-already">{{cmbox.notinstallednums}}</span>
+              <span class="data-all">/{{cmbox.totalnums}}</span>
             </p>
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#20A9F9"></el-progress>
             <p class="data">
-              <span class="data-already">200</span>
-              <span class="data-all">/400</span>
+              <span class="data-already">{{meterbox.notinstallednums}}</span>
+              <span class="data-all">/{{meterbox.totalnums}}</span>
             </p>
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="50" color="#20A9F9"></el-progress>
             <p class="data">
-              <span class="data-already">200</span>
-              <span class="data-all">/400</span>
+              <span class="data-already">{{lock.notinstallednums}}</span>
+              <span class="data-all">/{{lock.totalnums}}</span>
             </p>
           </div>
         </div>
@@ -144,26 +144,39 @@ export default {
   name: "progressbar",   
   data() {
     return {
-      Cmbox: [],
+      cmbox: {},
+      meterbox: {},
+      lock: {},
+      cmboxRepaired: {},
+      meterboxRepaired: {},
+      lockRepaired: {},
     }
   },
   components: {},
   mounted() {
-    this.init(0)
+    this.init({id: 0, type: 1})  
   },
   methods: {
     flush() {
-      this.init()
+      console.log("progress flush")
+      // this.init()
     },
-    init(id) {
-      const Cmbox = this.$http.post('/dmp/api/Cmbox/Count', id) 
-      const Meterbox = this.$http.post('/dmp/api/Meterbox/Count', id)
-      const lock = this.$http.post('/dmp/api/Lock/Count', id)
-      this.Cmbox = Cmbox[0]
-      this.Meterbox = Meterbox[0]
+    init(param) {
+      const cmbox = this.$http.post('/dmp/api/Cmbox/Count', param)
+      const meterbox = this.$http.post('/dmp/api/Meterbox/Count', param)
+      const lock = this.$http.post('/dmp/api/Lock/Count', param)
+      const cmboxRepaired = this.$http.post('/dmp/api/Cmbox/RepairedCount', param)
+      const meterboxRepaired = this.$http.post('/dmp/api/Meterbox/RepairedCount', param)
+      const lockRepaired = this.$http.post('/dmp/api/Lock/RepairedCount', param)
+      this.cmbox = cmbox[0]
+      this.meterbox = meterbox[0]
+      this.lock = lock[0]
+      this.cmboxRepaired = cmboxRepaired[0]
+      this.meterboxRepaired = meterboxRepaired[0]
+      this.lockRepaired = lockRepaired[0]
     }
   }
-};
+}
 </script>
 
 <style lang="stylus">
@@ -233,4 +246,3 @@ export default {
 
 
 </style>  
-

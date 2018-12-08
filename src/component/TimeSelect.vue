@@ -40,6 +40,7 @@ export default {
   name: '',
   data() {
     return {
+      value:null,
       year: [{
         value: '2018',
         label: '2018年'
