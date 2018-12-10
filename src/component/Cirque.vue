@@ -6,6 +6,18 @@
 export default {
   name: "",
   props: {
+    cmboxPercent: {
+      type: Object,
+    },
+    meterboxPercent: {
+      type: Object
+    },
+    lockPercent: {
+      type: Object
+    },
+    cmboxRepaired: {
+      type: Number
+    },
     type: {
       type: Number,
       require: true
@@ -16,43 +28,59 @@ export default {
       
     }
   },
+  watch: {
+    cmboxPercent() {
+      this.init(this.cmboxPercent)
+    },
+    meterboxPercent() {
+      this.init(this.meterboxPercent)
+    },
+    lockPercent() {
+      this.init(this.lockPercent)
+    },
+    cmboxRepaired() {
+      this.init(this.cmboxRepaired)
+    },
+    meterRepaired() {
+      this.init(this.meterRepaired)
+    },
+    lockRepaired() {
+      this.init(this.lockRepaired)
+    }
+  },
   components: {},
   mounted() {
     this.init()
   },
   methods: {
-    init() {
+    init(value) {
       // 引入echarts
       const echarts = require("echarts")
-
       const chart = echarts.init(document.getElementById(`main${this.type}`))
-      if (this.type === 1) {
+      if (this.type === 1 || this.type === 4 || this.type === 7) {
         var color = ["#79C171", "#FB62B5", "#19ABF7"]
         // 圆环图各环节的名称和值(系列中各数据项的名称和值)  
+        if (!value) return
         var data = [
           {
-            name: "a",
-            value: 36.5
+            name: "",
+            value: value.onlineNums||0
           },
           {
-            name: "b",
-            value: 36.5
+            name: "",
+            value: value.offlineNums||0
           },
           {
-            name: "c",
-            value: 36.5
+            name: "",
+            value: value.notInstalledNums||0
           },
         ]
-      } else if (this.type === 2) {
+      } else if (this.type === 2 || this.type === 5 || this.type === 8) {
         var color = ["#FEAA03", "#355E96"]
         var data = [
           {
             name: "维修率",
-            value: 36.5
-          },
-          {
-            name: "b",
-            value: 36.5
+            value: value
           },
         ]
       } else {
