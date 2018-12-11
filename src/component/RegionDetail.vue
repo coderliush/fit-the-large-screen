@@ -68,6 +68,8 @@ export default {
         img
           width 400px
           height 400px 
+        p 
+          margin 10px 0
         div
           flex 1
           text-align center

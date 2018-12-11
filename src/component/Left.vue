@@ -18,9 +18,9 @@
       <div class="container">
         <img src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
-          <cirque class="item" :type="1" :cmboxPercent="cmboxPercent"></cirque>
-          <cirque class="item" :type="2" :cmboxRepaired="Number((cmboxRepaired.repairedNums/cmboxRepaired.totalNums*100).toFixed(1))"></cirque>
-          <cirque class="item" :type="3"></cirque>
+          <state-cirque class="item" :cmboxPercent="cmboxPercent"></state-cirque>
+          <repair-cirque class="item" :cmboxRepairedPercent="repairedPercent.cmboxRepairedPercent"></repair-cirque>
+          <brand-cirque class="item" :cmboxBrandPercent="cmboxBrandPercent"></brand-cirque>
         </div>
         <img src="../common/img/border-right.png" alt="">
       </div>
@@ -44,9 +44,9 @@
       <div class="container">
         <img src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
-          <cirque class="item" :type="4" :meterboxPercent="meterboxPercent"></cirque>
-          <cirque class="item" :type="5" :meterRepaired="Number((meterboxRepaired.repairedNums/meterboxRepaired.totalNums*100).toFixed(1))"></cirque>
-          <cirque class="item" :type="6"></cirque>
+          <state-cirque class="item" :meterboxPercent="meterboxPercent"></state-cirque>
+          <repair-cirque class="item" :meterboxRepairedPercent="repairedPercent.meterboxRepairedPercent"></repair-cirque>
+          <brand-cirque class="item" :meterBrandPercent="meterBrandPercent"></brand-cirque>
         </div>
         <img src="../common/img/border-right.png" alt="">
       </div>
@@ -72,21 +72,21 @@
       <div class="container">
         <img src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
-          <cirque class="item" :type="7" :lockPercent="lockPercent"></cirque>
-          <cirque class="item" :type="8" :lockRepaired="Number((lockRepaired.repairedNums/lockRepaired.totalNums*100).toFixed(1))"></cirque>
-          <cirque class="item" :type="9"></cirque>
+          <state-cirque class="item" :lockPercent="lockPercent"></state-cirque>
+          <repair-cirque class="item"></repair-cirque>
+          <brand-cirque class="item" :lockBrandPercent="lockBrandPercent"></brand-cirque>
         </div>
         <img src="../common/img/border-right.png" alt="">
       </div>
     </div>
-
-    
   </div>
 
 </template>
 
 <script type="text/ecmascript-6">
-import Cirque from 'component/Cirque'
+import StateCirque from 'component/StateCirque'
+import RepairCirque from 'component/RepairCirque'
+import BrandCirque from 'component/BrandCirque'
 export default {
   name: '',
   data() {
@@ -102,14 +102,22 @@ export default {
       },
       cmboxPercent: {},
       meterboxPercent: {},
-      lockPercent: {}
+      lockPercent: {},
+      repairedPercent: {},
+
+
+      cmboxBrandPercent: {},
+      meterBrandPercent: {},
+      lockBrandPercent: {},
     }
   },
   components: {
-    Cirque
+    StateCirque,
+    RepairCirque,
+    BrandCirque
   },
   methods: {
-    flush({cmbox, meterbox, lock, cmboxRepaired, meterboxRepaired, cmboxPercent, meterboxPercent, lockPercent}) {
+    flush({cmbox, meterbox, lock, cmboxRepaired, meterboxRepaired, cmboxPercent, meterboxPercent, lockPercent, repairedPercent}, param) {
       this.cmbox = cmbox
       this.meterbox = meterbox
       this.lock = lock
@@ -118,13 +126,39 @@ export default {
       this.cmboxPercent = cmboxPercent
       this.meterboxPercent = meterboxPercent
       this.lockPercent = lockPercent
-    },
-    // init() {
+      this.repairedPercent = repairedPercent
 
-    // }
+      this.init(param)
+    },
+    async init(param) {
+      const results = await this.$http.awaitTasks([
+        this.$http.post('/dmp/api/Cmbox/BrandCount', param),
+        this.$http.post('/dmp/api/Meterbox/BrandCount', param),
+        // this.$http.post('/dmp/api/Lock/BrandCount', param),
+      ])
+      
+      this.computedPercent(results)
+    },
+    computedPercent(data) {
+      let that = this
+      data.forEach((item, index) => {
+        for (let k in item) {
+          if (item[k] === 0) { item[k] === 0 } else { item[k] = Number((item[k] / item.totalNums*100).toFixed(1)) }
+        }
+        if (index === 0) {
+          that.cmboxBrandPercent = item
+        } else if (index === 1) {
+          that.meterBrandPercent = item
+        } else {
+          that.lockBrandPercent = item
+        }
+      })
+      console.log('this.cmboxBrandPercent ', this.cmboxBrandPercent )
+    }
   },
   mounted() {
-    // this.init()
+    const param = { id: 0, type: 2}
+    this.init(param)
   }
 }
 </script>
@@ -159,7 +193,7 @@ export default {
           position relative 
           top -4px
           font-size 22px
-          color $color-active
+          color $number-active
     .container
       display flex
       justify-content center

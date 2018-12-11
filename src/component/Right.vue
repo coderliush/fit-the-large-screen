@@ -9,22 +9,18 @@
       <div class="container">
         <div class="select-wrapper">
           <div class="select1" v-show="isActive">
-            
-          </div>
-
-          <div class="select2" v-show="!isActive">
             <el-select
-              v-for="(districts,index) in districtselesctoptions"
+              v-for="(orgs,index) in orgselesctoptions"
               :key="index"
-              v-model="districtselescts[index]"
-              @change="SelectChange(index,districtselescts[index])"
+              v-model="orgselescts[index]"
+              @change="SelectChange(index,orgselescts[index])"
               placeholder="请选择"
             >
               <el-option
-                v-for="(district,j) in districts"
+                v-for="(org,j) in orgs"
                 :key="j"
-                :label="district.name"
-                :value="district.id"
+                :label="org.name"
+                :value="org.id"
               >
               </el-option>
             </el-select>
@@ -45,6 +41,25 @@
                 </el-option>
             </el-select>
           </div>
+
+          <div class="select2" v-show="!isActive">
+            <el-select
+              v-for="(districts,index) in districtselesctoptions"
+              :key="index"
+              v-model="districtselescts[index]"
+              @change="SelectChange(index,districtselescts[index])"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="(district,j) in districts"
+                :key="j"
+                :label="district.name"
+                :value="district.id"
+              >
+              </el-option>
+            </el-select>
+          </div>
+
         </div>
         <p class="header">运营管理本部</p>
         <div class="body">
@@ -53,7 +68,7 @@
         </div>
         <div class="count">
           <p><span>公寓总数：</span><span>{{cellcount}}</span></p>
-          <p><span>设备总数：</span><span>1888</span></p>
+          <p><span>设备总数：</span><span>{{deviceCount}}</span></p>
         </div>
         <div class="footer">
           <div class="item" v-for="(item, index) in mapArr" :key="index">
@@ -80,7 +95,7 @@ export default {
   },
   data() {
     return {
-      isActive: false,
+      isActive: true,
       mapArr: [
         {
           url: require("common/img/icon/mark1.png"),
@@ -120,6 +135,7 @@ export default {
       cellselect: null,
       celloptions: null,
       cellcount:null,//公寓总数
+      deviceCount:null,//设备总数
     };
   },
   async mounted() {
@@ -139,20 +155,47 @@ export default {
     // setTimeout(() => this.init(), 300);
   },
   methods: {
+    //选择五级架构
     tab1() {
       this.isActive = true;
+      var index = 0;
+      var selected =0 ;
+      if(this.orgselescts.length){
+        index = this.orgselescts.length -1;
+        selected = this.orgselescts[index];
+      }
+      this.SelectChange(index,selected);
     },
+    //选择行政区
     tab2() {
       this.isActive = false;
+      var index = 0;
+      var selected =0 ;
+      if(this.districtselescts.length){
+        index = this.districtselescts.length -1;
+        selected = this.districtselescts[index];
+      }
+      this.SelectChange(index,selected);
     },
-    //获取地图显示数据
+    //获取地图显示数据(行政区)
     async getdatalist(id,isleaf){
       var getvillage = null,villages = null;
       if(isleaf)  getvillage = this.$http.get(`/dmp/api/Map/QueryVillage/${id}`);
-      const datalist = await this.$http.post('/dmp/api/Map/CellCount',{id:id,isleaf:isleaf});
+      const httpresults = await this.$http.awaitTasks([
+        this.$http.post('/dmp/api/Map/CellCount',{id:id,isleaf:isleaf}),
+        this.$http.post('/dmp/api/Map/DeviceCount',{id:id,isleaf:isleaf})
+      ]);
+      const datalist = httpresults[0];
+      const datalist2 = httpresults[1];
       if(isleaf) villages = await getvillage;
       for(var i =0;i<datalist.length;i++){
         var node = datalist[i];
+
+        var node2 = datalist2.find(item=>item.id==node.id);
+        if(node2) node.deviceCount = node2.count;
+        else node.count = 0;
+        node.cellCount = node.count;
+        
         var find =null;
         if(isleaf){
           find = villages.find(item=>item.id===node.id);
@@ -161,46 +204,99 @@ export default {
           find = this.districts.find(item=>item.id===node.id);
           if(find.name=='上海市') {
             find = this.districts.find(item=>item.name=='上海市'&&item.parrentid!==0);
-            node.id = find.id;
+            if(find) node.id = find.id;
           }
           else if(find.name=='北京市') {
             find = this.districts.find(item=>item.name=='北京市'&&item.parrentid!==0);
-            node.id = find.id;
+            if(find) node.id = find.id;
           }
         }
-        node.name = find.name;
-        node.lng = find.lng;
-        node.lat = find.lat;
+        if(find){
+          node.name = find.name;
+          node.lng = find.lng;
+          node.lat = find.lat;
+        }
       }
       var showlist = datalist.filter(d=>d.cellCount);
       this.cellcount = showlist.reduce((p,c)=>{
         return p+c.cellCount;
       },0);
+      this.deviceCount = showlist.reduce((p,c)=>{
+        return p+c.deviceCount;
+      },0);
+      return showlist;
+    },
+    //获取地图显示数据(五级架构)
+    async getorgdatalist(id,isleaf){
+      var getvillage = null,villages = null;
+      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Org/QueryVillage/${id}`);
+      const httpresults = await this.$http.awaitTasks([
+        this.$http.post('/dmp/api/Org/CellCount',{id:id,isleaf:isleaf}),
+        this.$http.post('/dmp/api/Org/DeviceCount',{id:id,isleaf:isleaf})
+      ]);
+      const datalist = httpresults[0];
+      const datalist2 = httpresults[1];
+      if(isleaf) villages = await getvillage;
+      for(var i =0;i<datalist.length;i++){
+        var node = datalist[i];
+
+        var node2 = datalist2.find(item=>item.id==node.id);
+        if(node2) node.deviceCount = node2.count;
+        else node.count = 0;
+        node.cellCount = node.count;
+
+        var find =null;
+        if(isleaf){
+          find = villages.find(item=>item.id===node.id);
+        }
+        else {
+          find = this.orgs.find(item=>item.id===node.id);
+        }
+        if(find){
+          node.name = find.name;
+          node.lng = find.lng;
+          node.lat = find.lat;
+        }
+      }
+      var showlist = datalist.filter(d=>d.cellCount);
+      this.cellcount = showlist.reduce((p,c)=>{
+        return p+c.cellCount;
+      },0);
+      this.deviceCount = showlist.reduce((p,c)=>{
+        return p+c.deviceCount;
+      },0);
       return showlist;
     },
     //下拉选择事件
     async SelectChange(index, id) {
-      this.$emit('nodechange',id);
+      if(index&&!id){
+        if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1});
+        else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2});
+      }
+      else this.$emit('nodechange',{id:id,type:this.isActive?1:2});
+
       this.showtype=0;//显示地图
       this.villageselect = null;//清除小区选择
       this.cellselect = null;//清除单元选择
       this.celloptions = null;//清除单元选择
       if (!this.isActive) {//行政区域
-        if( this.districtselescts.length){
-          this.districtselescts.length = index + 1;
-          this.districtselesctoptions.length = index + 1;
-        }
+        this.districtselescts.length = index + 1;
+        this.districtselesctoptions.length = index + 1;
         //const getdatalist = this.$http.post('/dmp/api/Map/CellCount',{id:0,isleaf:false});
         if(id==0){
-          this.villageoptions =null;//小区选择清除
+          this.villageoptions = null;//小区选择清除
           if(index!=0){
             var datalist = await this.getdatalist(this.districtselescts[index-1],false);
+            this.districtselescts[index]=0;
             this.districtselesctoptions[index]=[{id:0,name:'全部'}, ...datalist];
             var node = this.districts.find(item=>item.id==this.districtselescts[index-1]);
             this.InitMap(node.name,datalist,node);//刷新地图
           }
           else{
             var datalist = await this.getdatalist(0,false);
+            this.districtselescts.length = 0;
+            this.districtselesctoptions.length = 0;
+            this.districtselescts.push(0);
             this.districtselesctoptions.push([{id:0,name:'全部'}, ...datalist]);
             this.InitMap("中国",datalist,null);//刷新地图
           }
@@ -215,29 +311,56 @@ export default {
         }
         else{
           this.villageoptions = [{id:0,name:'全部'}, ...datalist];
+          this.villageselect = 0;
         }
         this.InitMap(node.name,datalist,node);//刷新地图
       } else {
         this.orgselescts.length = index + 1;
         this.orgselesctoptions.length = index + 1;
-        var node = this.districts.find(item=>item.id==id);
-        if (node.isleaf) {
-          //选择服务中心时 查询小区
-        } else {
-          const nextselects = this.orgs.filter(v => v.parrentid == node.id);
-          this.orgselescts.push(0);
-          this.orgselesctoptions.push([{id:0,name:'全部'}, ...nextselects]);
+        if(id==0){
+          this.villageoptions = null;//小区选择清除
+          if(index!=0){
+            var datalist = await this.getorgdatalist(this.orgselescts[index-1],false);
+            this.orgselescts[index]=0;
+            this.orgselesctoptions[index]=[{id:0,name:'全部'}, ...datalist];
+            var node = this.orgs.find(item=>item.id==this.orgselescts[index-1]);
+            this.InitMap(node.name,datalist,node);//刷新地图
+          }
+          else{
+            var rootnode = this.orgs.find(item=>item.parrentid==0);
+            var datalist = await this.getorgdatalist(rootnode.id,false);
+            this.orgselescts.length = 0;
+            this.orgselesctoptions.length = 0;
+            this.orgselescts.push(0);
+            this.orgselesctoptions.push([{id:0,name:'全部'}, ...datalist]);
+            this.InitMap("中国",datalist,null);//刷新地图
+          }
+          return;
         }
+        var node = this.orgs.find(item=>item.id==id);
+        var datalist = await this.getorgdatalist(node.id,node.isleaf);
+        if (!node.isleaf){ 
+          this.villageoptions = null;//小区选择清除
+          this.orgselescts.push(0);
+          this.orgselesctoptions.push([{id:0,name:'全部'}, ...datalist]);
+        }
+        else{
+          this.villageoptions = [{id:0,name:'全部'}, ...datalist];
+          this.villageselect = 0;
+        }
+        this.InitMap(node.name,datalist,node);//刷新地图
       }
     },
     async SelectVillage(id){
        this.cellselect = null;//清除单元选择
        var village = this.villageoptions.find(item=>item.id==id);
         if(id==0){//选择全部
-          this.showtype=0;
+          this.$emit('nodechange',{id:this.orgselescts[this.orgselescts.length-1],type:1});//更新图表
+          this.showtype = 0;
           this.celloptions = null;//清除单元选择
         }
         else{
+          this.$emit('nodechange',{id:id,type:3});//更新图表
           this.showtype=1;
           const celloptions = await this.$http.get(`/dmp/api/Cell/QueryCell/${id}`);
           this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
@@ -296,15 +419,18 @@ export default {
       this.SelectChange(0,0);
     },
     async InitMap(cityname,datalist,node) {
-      if (!this.CityData[cityname]&&!this.CityData[cityname]!==null)
+      var points = null;
+      if(!this.isActive||cityname==="中国"){//是否需要获取边界数据抠图
+        if (!this.CityData[cityname]&&!this.CityData[cityname]!==null)
         this.CityData[cityname] = this.GetData(cityname,node);
-      const points = await this.CityData[cityname]; //获取城市边界遮挡数据
+        points = await this.CityData[cityname]; //获取城市边界遮挡数据
+      }
 
       // const pcenter = this.CityCenter[cityname]; //地图显示区域中心
       let view = this.getZoom(cityname,datalist);
       this.$zoom = view.zoom;
       this.$center = view.center;
-      if(this.CityCenter[cityname]) this.$center =this.CityCenter[cityname];
+      if(!this.isActive||cityname==="中国") this.$center =this.CityCenter[cityname];
 
       var serietype = 'effectScatter';
       if(this.villageoptions) serietype='scatter';
@@ -497,9 +623,9 @@ export default {
             tooltip: {
               trigger :'item',
               formatter: function(params){
-                console.log(params);
+                //console.log(params);
                 var node = params.value[2];
-                return `${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${node.cellCount}`;
+                return `${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}`;
               }
             },
             zlevel: 1
@@ -529,7 +655,7 @@ export default {
       });
       this.bMap = map;
 
-      if(points){
+      if((!this.isActive||cityname==="中国")&&points){
         this.curlay = new BMap.Polygon(points, {
           strokeColor: "none",
           fillColor: "#080E3E",

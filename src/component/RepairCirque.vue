@@ -1,105 +1,61 @@
 <template>
-  <div :id="`main${type}`"></div>
+  <div ref="cirque"></div>
 </template>
 
 <script type="text/ecmascript-6">
 export default {
   name: "",
   props: {
-    cmboxPercent: {
-      type: Object,
-    },
-    meterboxPercent: {
-      type: Object
-    },
-    lockPercent: {
-      type: Object
-    },
     cmboxRepairedPercent: {
       type: Number
     },
     meterboxRepairedPercent: {
       type: Number
     },
-    type: {
-      type: Number,
-      require: true
-    }
   },
   data() {
-    return {
-      
-    }
+    return {};
   },
   watch: {
     cmboxPercent() {
-      this.init(this.cmboxPercent)
+      this.init(this.cmboxPercent);
     },
     meterboxPercent() {
-      this.init(this.meterboxPercent)
+      this.init(this.meterboxPercent);
     },
     lockPercent() {
-      this.init(this.lockPercent)
+      this.init(this.lockPercent);
     },
     cmboxRepairedPercent() {
-      this.init(this.cmboxRepairedPercent)
+      this.init(this.cmboxRepairedPercent);
     },
     meterboxRepairedPercent() {
-      this.init(this.meterboxRepairedPercent)
+      this.init(this.meterboxRepairedPercent);
     },
     lockRepaired() {
-      this.init(this.lockRepaired)
+      this.init(this.lockRepaired);
     }
   },
   components: {},
   mounted() {
-    this.init()
+    this.init();
   },
   methods: {
     init(value) {
       // 引入echarts
       const echarts = require("echarts")
-      const chart = echarts.init(document.getElementById(`main${this.type}`))
+      const chart = echarts.init(this.$refs.cirque)
       if (this.type === 1 || this.type === 4 || this.type === 7) {
         var color = ["#79C171", "#FB62B5", "#19ABF7"]
-        // 圆环图各环节的名称和值(系列中各数据项的名称和值)  
         if (!value) return
-        var data = [
-          {
-            name: "",
-            value: value.onlineNums||0
-          },
-          {
-            name: "",
-            value: value.offlineNums||0
-          },
-          {
-            name: "",
-            value: value.notInstalledNums||0
-          },
-        ]
-      } else if (this.type === 2 || this.type === 5 || this.type === 8) {
-        console.log('this.typethis.typethis.type', this.type)
         var color = ["#FEAA03", "#355E96"]
         var data = [
           {
             name: "维修率",
             value: value
-          },
-        ]
-      } else {
-        var  color = ["#19ABF7", "#355E96"]
-        var data = [
-          {
-            name: "品牌A",
-            value: 36.5
-          },
-          {
-            name: "品牌B",
-            value: 36.5
-          },
-        ]
-      }
+          }
+        ];
+      } 
 
       // 指定图表的配置项和数据
       var option = {
@@ -116,32 +72,35 @@ export default {
             },
             data: ["1", "2", "3", "4"]
           }
-        ], 
+        ],
         // 提示框
         tooltip: {
-          show: true, // 是否显示提示框    
+          show: true, // 是否显示提示框
           formatter: "b:{b}, c:{c}, d:{d}" // 提示框显示内容,此处{b}表示各数据项名称，此项配置为默认显示项，{c}表示数据项的值，默认不显示，({d}%)表示数据项项占比，默认不显示。
         },
         graphic: {
-          elements: [{
-              type: 'image',
+          elements: [
+            {
+              type: "image",
               style: {
-                  image: require('../common/img/icon/bulb.png'),
-                  width: 20,
-                  height: 20
+                image: require("../common/img/icon/bulb.png"),
+                width: 20,
+                height: 20
               },
-              left: 'center',
-              top: 'center'
-          },{
-            type: 'text',
-            style: {
-              text: '555',
-              width: 20,
-              height: 20
+              left: "center",
+              top: "center"
+            },
+            {
+              type: "text",
+              style: {
+                text: "555",
+                width: 20,
+                height: 20
               },
-            left: 'center',
-            top: 'center'
-          }]
+              left: "center",
+              top: "center"
+            }
+          ]
         },
 
         // graphic 是原生图形元素组件。可以支持的图形元素包括：image, text, circle, sector, ring, polygon, polyline, rect, line, bezierCurve, arc, group,
@@ -178,7 +137,7 @@ export default {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 15, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。  
+                length: 15, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
                 length2: 10, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式

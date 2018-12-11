@@ -18,10 +18,10 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.onlineNums" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.onlineCmbox" color="#80C268"></el-progress>
             <p class="data">
-              <span class="data-already">{{cmbox.onlineNums}}</span>
-              <span class="data-all">/{{cmbox.totalNums}}</span>
+              <span class="data-already">{{cmbox.onlineCmbox}}</span>
+              <span class="data-all">/{{cmbox.totalCmbox}}</span>
             </p>
           </div>
           <div class="bar">
@@ -45,14 +45,14 @@
         <div class="item">
           <div class="sub">
             <img src="../common/img/icon/outline.png" alt="">
-            <p>离线设备统计</p>
+            <p class="font-weight">离线设备统计</p>
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.offlineNums" color="#FF65B9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.offlineCmbox" color="#FF65B9"></el-progress>
             <p class="data">
-              <span class="data-already">{{cmbox.offlineNums}}</span>
-              <span class="data-all">/{{cmbox.totalNums}}</span>
+              <span class="data-already">{{cmbox.offlineCmbox}}</span>
+              <span class="data-all">/{{cmbox.totalCmbox}}</span>
             </p>
           </div>
           <div class="bar">
@@ -111,10 +111,10 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.notInstalledNums" color="#20A9F9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.nosetCmbox" color="#20A9F9"></el-progress>
             <p class="data">
-              <span class="data-already">{{cmbox.notInstalledNums}}</span>
-              <span class="data-all">/{{cmbox.totalNums}}</span>
+              <span class="data-already">{{cmbox.nosetCmbox}}</span>
+              <span class="data-all">/{{cmbox.totalCmbox}}</span>
             </p>
           </div>
           <div class="bar">
@@ -144,19 +144,9 @@ export default {
   name: "progressbar",   
   data() {
     return {
-      cmbox: {},
-      meterbox: {},
-      lock: {},
-      cmboxRepaired: {},
-      meterboxRepaired: {},
-      lockRepaired: {
-        repairedNums: 20,
-        totalNums: 40
-      },
       cmboxPercent: {},
-      meterboxPercent: {},
-      lockPercent: {},
-      repairedPercent: {}
+      meterPercent: {},
+      lockPercent: {}
     }
   },
   components: {},
@@ -164,19 +154,20 @@ export default {
 
   },
   methods: {
-    flush({cmbox, meterbox, lock, cmboxRepaired, meterboxRepaired, cmboxPercent, meterboxPercent, lockPercent, repairedPercent}) {
-      this.cmbox = cmbox
-      console.log('cmbox', cmbox)
-      this.meterbox = meterbox
-      this.lock = lock
-      this.cmboxRepaired = cmboxRepaired
-      this.meterboxRepaired = meterboxRepaired
-      this.cmboxPercent = cmboxPercent
-      this.meterboxPercent = meterboxPercent
-      this.lockPercent = lockPercent
-      this.repairedPercent = repairedPercent
+    flush(data) {
+      console.log('data', data)
+      for (let item in data) {
+        for (let k in item) {
+          if (item[k] === 0) {
+            this[`${item}percent`].push({ k: 0 })
+          } else {
+            this[`${item}percent`].push({ k: Number((item[k]/item.totalCmbox*100).toFixed(1))})
+          }
+        }
+      }
+      console.log('meterPercentmeterPercentmeterPercent', this.meterPercent)
     },
-  }
+  },
 }
 </script>
 
@@ -191,6 +182,7 @@ export default {
 
   .progress
     position relative
+    color $color-active
     .title
       position relative
       left 22px
@@ -221,6 +213,8 @@ export default {
           display flex
           img 
             margin-right 14px
+          p
+            font-weight bold
         .bar 
           flex 1
           display flex
@@ -228,6 +222,8 @@ export default {
           padding-right 20px
           border-right 2px solid #064168
           font-size $font-small
+          p:nth-of-type(2)
+            min-width 100px
           .label
             width 28px
           .el-progress

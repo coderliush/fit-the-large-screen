@@ -2,7 +2,7 @@
   <div class="wrapper">
     <qk-header></qk-header>
     <div class="container">
-      <time-select></time-select>
+      <!-- <time-select></time-select> -->
       <progress-bar ref="progress"></progress-bar>
       <div class="layout">
         <left class="left" ref="left"/>
@@ -31,62 +31,63 @@ export default {
   },
   methods:{
     async nodechange(nodedata){
-      const param = {id: nodedata, type: 2}
-      const cmbox = await this.$http.post('/dmp/api/Cmbox/Count', param)
-      const meterbox = await this.$http.post('/dmp/api/Meterbox/Count', param)
-      const lock = await this.$http.post('/dmp/api/Lock/Count', param)
-      const cmboxRepaired = await this.$http.post('/dmp/api/Cmbox/RepairedCount', param)
-      const meterboxRepaired = await this.$http.post('/dmp/api/Meterbox/RepairedCount', param)
-      // const lockRepaired = await this.$http.post('/dmp/api/Lock/RepairedCount', param)
+      console.log(nodedata);
+      var cmboxResults = this.$http.awaitTasks([
+        this.$http.post('dmp/api/Cell/Count', nodedata),//网关总数
+        this.$http.post('dmp/api/Cmbox/Count', nodedata),//已安装数量
+        this.$http.post('dmp/api/Cmbox/CountOffline', nodedata),//离线数量
 
-      this.computedPercent('cmboxPercent', cmbox)
-      this.computedPercent('meterboxPercent', meterbox)
-      this.computedPercent('lockPercent', lock)
-      this.computedPercent('cmboxRepaired', lock)
-      this.computedPercent('meterboxRepaired', lock)
+        this.$http.post('dmp/api/cell/Count', nodedata),//电表总数
+        this.$http.post('dmp/api/Meterbox/Count', nodedata),//已安装数量
+        this.$http.post('dmp/api/Meterbox/CountOffline', nodedata),//离线数量
 
-      this.$refs.progress.flush({cmbox, meterbox, lock, cmboxRepaired, meterboxRepaired, cmboxPercent: this.cmboxPercent, meterboxPercent: this.meterboxPercent, lockPercent: this.lockPercent, repairedPercent: this.repairedPercent});
-      this.$refs.left.flush({cmbox, meterbox, lock, cmboxPercent: this.cmboxPercent, meterboxPercent: this.meterboxPercent, lockPercent: this.lockPercent});
-    },
-    computedPercent(type, obj) {
-      for (let k in obj) {
-        if (type === 'cmboxPercent') { 
-          if (obj[k] === 0) {
-            this.cmboxPercent[k] = 0
-          } else {
-            this.cmboxPercent[k] = Number((obj[k] / obj.totalNums*100).toFixed(1)) 
-          }
-        }
-        if (type === 'meterboxPercent') { 
-          if (obj[k] === 0) {
-            this.meterboxPercent[k] = 0
-          } else {
-            this.meterboxPercent[k] = Number((obj[k] / obj.totalNums*100).toFixed(1)) 
-          }
-        }
-        if (type === 'lockPercent') { 
-          if (obj[k] === 0) {
-            this.lockPercent[k] = 0
-          } else {
-            this.lockPercent[k] = Number((obj[k] / obj.totalNums*100).toFixed(1)) 
-          }
-        }
-        if (type === 'cmboxRepaired') {
-          if (obj[repairedNums] === 0) {
-            this.repairedPercent[cmboxRepaired] = 0 
-          } else {
-            this.repairedPercent[cmboxRepaired] = Number((obj[repairedNums] / obj.totalNums*100).toFixed(1)) 
-          }
-        }
-        if (type === 'meterboxRepaired') {
-          if (obj[repairedNums] === 0) {
-            this.repairedPercent[meterboxRepaired] = 0 
-          } else {
-            this.repairedPercent[meterboxRepaired] = Number((obj[repairedNums] / obj.totalNums*100).toFixed(1)) 
-          }
-        }
+        this.$http.post('dmp/api/cell/Count', nodedata),//锁总数
+        this.$http.post('dmp/api/lock/Count', nodedata),//已安装数量
+        this.$http.post('dmp/api/lock/CountOffline', nodedata),//离线数量
+
+        this.$http.post('dmp/api/cell/Count', nodedata),//电表总数                             ----------------维修-------------
+        this.$http.post('dmp/api/lock/Count', nodedata),//已安装数量
+        this.$http.post('dmp/api/lock/CountOffline', nodedata),//离线数量
+      ])
+
+      console.log('httpresults', httpresults)
+      const cmbox = {
+        totalCmbox: httpresults[0],                     // 总数
+        nosetCmbox: httpresults[0] - httpresults[1],    // 未安装
+        offlineCmbox: httpresults[2],                   // 离线
+        onlineCmbox: totalCmbox - offlineCmbox          // 在线
       }
-    }
+
+      // const meterbox = {
+      //   totalMeter: httpresults[3],                    
+      //   nosetMeter: httpresults[3] - httpresults[4],  
+      //   offlineMeter: httpresults[5],                   
+      //   onlineMeter: totalMeter - offlineMeter         
+      // }
+      const meterbox = {
+        totalMeter: 600,
+        nosetMeter: 10,
+        offlineMeter: 60,
+        onlineMeter: 70
+      }
+
+      // const lock = {
+      //   totalLock: httpresults[6],                    
+      //   nosetLock: httpresults[6] - httpresults[7],   
+      //   offlineLock: httpresults[8],                   
+      //   onlineLock: totalLock - offlineLock            
+      // }
+      const lock = {
+        totalLock: 300,
+        nosetLock: 40,
+        offlineLock: 30,
+        onlineLock: 70
+      }
+  
+
+      this.$refs.progress.flush({cmbox, meterbox, lock})
+      // this.$refs.left.flush({cmbox, meterbox, lock, cmboxRepaired, meterboxRepaired, cmboxPercent: this.cmboxPercent, meterboxPercent: this.meterboxPercent, lockPercent: this.lockPercent, repairedPercent: this.repairedPercent}, param);
+    },
   },
   components: {
     TimeSelect,

@@ -99,6 +99,14 @@ export default {
                 const res = await axios.post(url, data).catch(res => res);
                 // block.unblock();
                 return handleResult(res);
+            },
+            async awaitTasks(tasks){
+                if(!tasks) return;
+                var result = [];
+                for(var i = 0; i<tasks.length;i++){
+                    result.push(await tasks[i]);
+                }
+                return result;
             }
         }
     }
