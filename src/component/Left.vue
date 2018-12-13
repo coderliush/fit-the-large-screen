@@ -12,21 +12,21 @@
         </div>
         <div class="right">
           <span class="font-small">网关总量</span>
-          <span class="num">{{cmbox.totalNums}}</span>
+          <span class="num">{{cmbox.total}}</span>
         </div>
       </div>
       <div class="container">
         <img src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
-          <state-cirque class="item" :cmboxPercent="cmboxPercent"></state-cirque>
-          <repair-cirque class="item" :cmboxRepairedPercent="repairedPercent.cmboxRepairedPercent"></repair-cirque>
-          <brand-cirque class="item" :cmboxBrandPercent="cmboxBrandPercent"></brand-cirque>
+          <state-cirque class="item" :cmbox="cmbox"></state-cirque>
+          <repair-cirque class="item" ></repair-cirque>
+          <brand-cirque class="item" ></brand-cirque>
         </div>
         <img src="../common/img/border-right.png" alt="">
       </div>
     </div>
 
-    <div class="item" style="margin: .6rem 0">
+    <div class="item" style="margin: 60px 0">
       <div class="title">
         <div class="left">
           <img src="../common/img/title-left.png" alt="">
@@ -38,15 +38,15 @@
         </div>
         <div class="right">
           <span class="font-small">电表总量</span>
-          <span class="num">{{meterbox.totalNums}}</span>
+          <span class="num">{{meterbox.total}}</span>
         </div>
       </div>
       <div class="container">
         <img src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
-          <state-cirque class="item" :meterboxPercent="meterboxPercent"></state-cirque>
-          <repair-cirque class="item" :meterboxRepairedPercent="repairedPercent.meterboxRepairedPercent"></repair-cirque>
-          <brand-cirque class="item" :meterBrandPercent="meterBrandPercent"></brand-cirque>
+          <state-cirque class="item" :meterbox="meterbox"></state-cirque>
+          <repair-cirque class="item"></repair-cirque>
+          <brand-cirque class="item"></brand-cirque>
         </div>
         <img src="../common/img/border-right.png" alt="">
       </div>
@@ -64,7 +64,7 @@
         </div>
         <div class="right">
           <span class="font-small">锁总量</span>
-          <span class="num">{{lock.totalNums}}</span>
+          <span class="num">{{lock.total}}</span>
           <span class="font-small">单元门锁/房间锁</span>
           <span class="num">1:10</span>
         </div>
@@ -72,9 +72,9 @@
       <div class="container">
         <img src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
-          <state-cirque class="item" :lockPercent="lockPercent"></state-cirque>
+          <state-cirque class="item" :lock="lock"></state-cirque>
           <repair-cirque class="item"></repair-cirque>
-          <brand-cirque class="item" :lockBrandPercent="lockBrandPercent"></brand-cirque>
+          <brand-cirque class="item"></brand-cirque>
         </div>
         <img src="../common/img/border-right.png" alt="">
       </div>
@@ -94,21 +94,6 @@ export default {
       cmbox: {},
       meterbox: {},
       lock: {},
-      cmboxRepaired: {},
-      meterboxRepaired: {},
-      lockRepaired: {
-        repairedNums: 20,
-        totalNums: 40
-      },
-      cmboxPercent: {},
-      meterboxPercent: {},
-      lockPercent: {},
-      repairedPercent: {},
-
-
-      cmboxBrandPercent: {},
-      meterBrandPercent: {},
-      lockBrandPercent: {},
     }
   },
   components: {
@@ -117,48 +102,13 @@ export default {
     BrandCirque
   },
   methods: {
-    flush({cmbox, meterbox, lock, cmboxRepaired, meterboxRepaired, cmboxPercent, meterboxPercent, lockPercent, repairedPercent}, param) {
+    flush({cmbox, meterbox, lock}) {
       this.cmbox = cmbox
       this.meterbox = meterbox
       this.lock = lock
-      this.cmboxRepaired = cmboxRepaired
-      this.meterboxRepaired = meterboxRepaired
-      this.cmboxPercent = cmboxPercent
-      this.meterboxPercent = meterboxPercent
-      this.lockPercent = lockPercent
-      this.repairedPercent = repairedPercent
-
-      this.init(param)
     },
-    async init(param) {
-      const results = await this.$http.awaitTasks([
-        this.$http.post('/dmp/api/Cmbox/BrandCount', param),
-        this.$http.post('/dmp/api/Meterbox/BrandCount', param),
-        // this.$http.post('/dmp/api/Lock/BrandCount', param),
-      ])
-      
-      this.computedPercent(results)
-    },
-    computedPercent(data) {
-      let that = this
-      data.forEach((item, index) => {
-        for (let k in item) {
-          if (item[k] === 0) { item[k] === 0 } else { item[k] = Number((item[k] / item.totalNums*100).toFixed(1)) }
-        }
-        if (index === 0) {
-          that.cmboxBrandPercent = item
-        } else if (index === 1) {
-          that.meterBrandPercent = item
-        } else {
-          that.lockBrandPercent = item
-        }
-      })
-      console.log('this.cmboxBrandPercent ', this.cmboxBrandPercent )
-    }
   },
   mounted() {
-    const param = { id: 0, type: 2}
-    this.init(param)
   }
 }
 </script>

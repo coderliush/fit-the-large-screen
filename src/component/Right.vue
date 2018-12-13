@@ -61,20 +61,20 @@
           </div>
 
         </div>
-        <p class="header">运营管理本部</p>
+        <p class="header">{{cityname}}</p>
         <div class="body">
           <div id="map" v-show="!showtype"></div>
           <RegionDetail :type="showtype" v-show="showtype"></RegionDetail>
         </div>
         <div class="count">
-          <p><span>公寓总数：</span><span>{{cellcount}}</span></p>
-          <p><span>设备总数：</span><span>{{deviceCount}}</span></p>
+          <p><span>全国公寓总数：</span><span>{{cellcount}}</span></p>
+          <p><span>全国设备总数：</span><span>{{deviceCount}}</span></p>
         </div>
         <div class="footer">
           <div class="item" v-for="(item, index) in mapArr" :key="index">
             <img :src="item.url" alt>
             <div>
-              <p>门禁数据</p>
+              <p>{{item.name}}</p>
               <p>{{item.num}}</p>
             </div>
           </div>
@@ -98,18 +98,22 @@ export default {
       isActive: true,
       mapArr: [
         {
+          name: '门禁总数',
           url: require("common/img/icon/mark1.png"),
           num: "132.456.79"
         },
         {
+          name: '充电总数',
           url: require("common/img/icon/mark2.png"),
           num: "132.456.79"
         },
         {
+          name: '流量总数',
           url: require("common/img/icon/mark3.png"),
           num: "132.456.79"
         },
         {
+          name: '用电总数',
           url: require("common/img/icon/mark4.png"),
           num: "132.456.79"
         }
@@ -419,6 +423,9 @@ export default {
       this.SelectChange(0,0);
     },
     async InitMap(cityname,datalist,node) {
+      this.cityname = cityname;
+      if(this.isActive&&cityname==="中国") this.cityname = this.orgs.find(item=>item.parrentid==0).name;
+
       var points = null;
       if(!this.isActive||cityname==="中国"){//是否需要获取边界数据抠图
         if (!this.CityData[cityname]&&!this.CityData[cityname]!==null)
@@ -900,6 +907,7 @@ export default {
       position: relative;
       top: -78px;
       left: 40px;
+      height: 0;
       p {
         margin-bottom: 10px;
         span:nth-of-type(2) {
@@ -925,7 +933,7 @@ export default {
         justify-content: center;
         p:nth-child(1) {
           font-size: $font-small;
-          margin-bottom: 0.05rem;
+          margin-bottom: 4px;
         }
         p:nth-child(2) {
           color: $color-active;

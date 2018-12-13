@@ -23,71 +23,101 @@ export default {
   name: 'app',
   data() {
     return {
-      cmboxPercent: {},
-      meterboxPercent: {},
-      lockPercent: {},
-      repairedPercent: {}
+
     }
   },
   methods:{
     async nodechange(nodedata){
-      console.log(nodedata);
-      var cmboxResults = this.$http.awaitTasks([
-        this.$http.post('dmp/api/Cell/Count', nodedata),//网关总数
+      var httpresults = await this.$http.awaitTasks([
+        // 网关
+        this.$http.post('dmp/api/Cell/Count', nodedata),//总数
         this.$http.post('dmp/api/Cmbox/Count', nodedata),//已安装数量
         this.$http.post('dmp/api/Cmbox/CountOffline', nodedata),//离线数量
 
-        this.$http.post('dmp/api/cell/Count', nodedata),//电表总数
-        this.$http.post('dmp/api/Meterbox/Count', nodedata),//已安装数量
-        this.$http.post('dmp/api/Meterbox/CountOffline', nodedata),//离线数量
+        // 电表
+        // this.$http.post('dmp/api/cell/Count', nodedata),//总数
+        // this.$http.post('dmp/api/Meterbox/Count', nodedata),//已安装数量
+        // this.$http.post('dmp/api/Meterbox/CountOffline', nodedata),//离线数量
 
-        this.$http.post('dmp/api/cell/Count', nodedata),//锁总数
-        this.$http.post('dmp/api/lock/Count', nodedata),//已安装数量
-        this.$http.post('dmp/api/lock/CountOffline', nodedata),//离线数量
+        // 锁
+        // this.$http.post('dmp/api/cell/Count', nodedata),//总数
+        // this.$http.post('dmp/api/lock/Count', nodedata),//已安装数量
+        // this.$http.post('dmp/api/lock/CountOffline', nodedata),//离线数量
 
-        this.$http.post('dmp/api/cell/Count', nodedata),//电表总数                             ----------------维修-------------
-        this.$http.post('dmp/api/lock/Count', nodedata),//已安装数量
-        this.$http.post('dmp/api/lock/CountOffline', nodedata),//离线数量
+        // 维修
+        // this.$http.post('dmp/api/cell/Count', nodedata),//总数                        
+        // this.$http.post('dmp/api/lock/Count', nodedata),//已安装数量
+        // this.$http.post('dmp/api/lock/CountOffline', nodedata),//离线数量
       ])
 
       console.log('httpresults', httpresults)
-      const cmbox = {
-        totalCmbox: httpresults[0],                     // 总数
-        nosetCmbox: httpresults[0] - httpresults[1],    // 未安装
-        offlineCmbox: httpresults[2],                   // 离线
-        onlineCmbox: totalCmbox - offlineCmbox          // 在线
+      let cmbox = {
+        total: httpresults[0],                     // 总数
+        noset: httpresults[0] - httpresults[1],    // 未安装
+        offline: httpresults[2],                   // 离线
+        online: httpresults[1] - httpresults[2]    // 在线
       }
 
-      // const meterbox = {
-      //   totalMeter: httpresults[3],                    
-      //   nosetMeter: httpresults[3] - httpresults[4],  
-      //   offlineMeter: httpresults[5],                   
-      //   onlineMeter: totalMeter - offlineMeter         
+      // let meterbox = {
+      //   total: httpresults[3],                    
+      //   noset: httpresults[3] - httpresults[4],  
+      //   offline: httpresults[5],                   
+      //   online: total - offline         
       // }
-      const meterbox = {
-        totalMeter: 600,
-        nosetMeter: 10,
-        offlineMeter: 60,
-        onlineMeter: 70
+      let meterbox = {
+        total: 600,
+        noset: 10,
+        offline: 60,
+        online: 70
       }
 
-      // const lock = {
-      //   totalLock: httpresults[6],                    
-      //   nosetLock: httpresults[6] - httpresults[7],   
-      //   offlineLock: httpresults[8],                   
-      //   onlineLock: totalLock - offlineLock            
+      // let lock = {
+      //   total: httpresults[6],                    
+      //   noset: httpresults[6] - httpresults[7],   
+      //   offline: httpresults[8],                   
+      //   onlin: total - offline            
       // }
-      const lock = {
-        totalLock: 300,
-        nosetLock: 40,
-        offlineLock: 30,
-        onlineLock: 70
+      let lock = {
+        total: 300,
+        noset: 40,
+        offline: 30,
+        online: 70
       }
+
+      // let repaire = {
+      //   total: httpresults[6],                    
+      //   noset: httpresults[6] - httpresults[7],   
+      //   offline: httpresults[8],                   
+      //   online: total - offline  
+      // }
+      let repaire = {
+        total: 800,                    
+        noset: 400,   
+        offline: 20,                   
+        online: 40  
+      }
+      cmbox = this.computedPercent(cmbox) 
+      meterbox = this.computedPercent(meterbox) 
+      lock = this.computedPercent(lock) 
+      repaire = this.computedPercent(repaire) 
   
 
       this.$refs.progress.flush({cmbox, meterbox, lock})
-      // this.$refs.left.flush({cmbox, meterbox, lock, cmboxRepaired, meterboxRepaired, cmboxPercent: this.cmboxPercent, meterboxPercent: this.meterboxPercent, lockPercent: this.lockPercent, repairedPercent: this.repairedPercent}, param);
+      this.$refs.left.flush({cmbox, meterbox, lock})
     },
+    computedPercent(obj) {
+      let _obj = {}
+      for (let k in obj) {
+        if (k !== 'total') {
+          if (obj[k] === 0) {
+            _obj[k + 'Percent'] = 0
+          } else {
+            _obj[k + 'Percent'] = Number((obj[k] / obj['total']*100).toFixed(1))
+          }
+        }
+      }
+      return {...obj, ..._obj}
+    }
   },
   components: {
     TimeSelect,

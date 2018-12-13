@@ -18,26 +18,26 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.onlineCmbox" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.onlinePercent" color="#80C268"></el-progress>
             <p class="data">
-              <span class="data-already">{{cmbox.onlineCmbox}}</span>
-              <span class="data-all">/{{cmbox.totalCmbox}}</span>
+              <span class="data-already">{{cmbox.online}}</span>
+              <span class="data-all">/{{cmbox.total}}</span>
             </p>
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterboxPercent.onlineNums" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.onlinePercent" color="#80C268"></el-progress>
             <p class="data">
-              <span class="data-already">{{meterbox.onlineNums}}</span>
-              <span class="data-all">/{{meterbox.totalNums}}</span>
+              <span class="data-already">{{meterbox.online}}</span>
+              <span class="data-all">/{{meterbox.total}}</span>
             </p>
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lockPercent.onlineNums" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.onlinePercent" color="#80C268"></el-progress>
             <p class="data">
-              <span class="data-already">{{lock.onlineNums}}</span>
-              <span class="data-all">/{{lock.totalNums}}</span>
+              <span class="data-already">{{lock.online}}</span>
+              <span class="data-all">/{{lock.total}}</span>
             </p>
           </div>
         </div>
@@ -49,31 +49,31 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.offlineCmbox" color="#FF65B9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.offlinePercent" color="#FF65B9"></el-progress>
             <p class="data">
-              <span class="data-already">{{cmbox.offlineCmbox}}</span>
-              <span class="data-all">/{{cmbox.totalCmbox}}</span>
+              <span class="data-already">{{cmbox.offline}}</span>
+              <span class="data-all">/{{cmbox.total}}</span>
             </p>
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterboxPercent.offlineNums" color="#FF65B9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.offlinePercent" color="#FF65B9"></el-progress>
             <p class="data">
-              <span class="data-already">{{meterbox.offlineNums}}</span>
-              <span class="data-all">/{{meterbox.totalNums}}</span>
+              <span class="data-already">{{meterbox.offline}}</span>
+              <span class="data-all">/{{meterbox.total}}</span>
             </p>
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lockPercent.offlineNums" color="#FF65B9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.offlinePercent" color="#FF65B9"></el-progress>
             <p class="data">
-              <span class="data-already">{{lock.offlineNums}}</span>
-              <span class="data-all">/{{lock.totalNums}}</span>
+              <span class="data-already">{{lock.offline}}</span>
+              <span class="data-all">/{{lock.total}}</span>
             </p>
           </div>
         </div>
 
-        <div class="item">
+        <!-- <div class="item">
           <div class="sub">
             <img src="../common/img/icon/operation.png" alt="">
             <p>维修设备统计</p>
@@ -102,7 +102,7 @@
               <span class="data-all">/{{lockRepaired.totalNums}}</span>
             </p>
           </div>
-        </div>
+        </div> -->
 
         <div class="item">
           <div class="sub">
@@ -111,26 +111,26 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmboxPercent.nosetCmbox" color="#20A9F9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.nosetPercent" color="#20A9F9"></el-progress>
             <p class="data">
-              <span class="data-already">{{cmbox.nosetCmbox}}</span>
-              <span class="data-all">/{{cmbox.totalCmbox}}</span>
+              <span class="data-already">{{cmbox.noset}}</span>
+              <span class="data-all">/{{cmbox.total}}</span>
             </p>
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterboxPercent.notInstalledNums" color="#20A9F9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.nosetPercent" color="#20A9F9"></el-progress>
             <p class="data">
-              <span class="data-already">{{meterbox.notInstalledNums}}</span>
-              <span class="data-all">/{{meterbox.totalNums}}</span>
+              <span class="data-already">{{meterbox.noset}}</span>
+              <span class="data-all">/{{meterbox.total}}</span>
             </p>
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lockPercent.notInstalledNums" color="#20A9F9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.nosetPercent" color="#20A9F9"></el-progress>
             <p class="data">
-              <span class="data-already">{{lock.notInstalledNums}}</span>
-              <span class="data-all">/{{lock.totalNums}}</span>
+              <span class="data-already">{{lock.noset}}</span>
+              <span class="data-all">/{{lock.total}}</span>
             </p>
           </div>
         </div>
@@ -144,9 +144,9 @@ export default {
   name: "progressbar",   
   data() {
     return {
-      cmboxPercent: {},
-      meterPercent: {},
-      lockPercent: {}
+      cmbox: {},
+      meterbox: {},
+      lock: {}
     }
   },
   components: {},
@@ -154,18 +154,10 @@ export default {
 
   },
   methods: {
-    flush(data) {
-      console.log('data', data)
-      for (let item in data) {
-        for (let k in item) {
-          if (item[k] === 0) {
-            this[`${item}percent`].push({ k: 0 })
-          } else {
-            this[`${item}percent`].push({ k: Number((item[k]/item.totalCmbox*100).toFixed(1))})
-          }
-        }
-      }
-      console.log('meterPercentmeterPercentmeterPercent', this.meterPercent)
+    flush({cmbox, meterbox, lock}) {
+      this.cmbox = cmbox
+      this.meterbox = meterbox
+      this.lock = lock
     },
   },
 }

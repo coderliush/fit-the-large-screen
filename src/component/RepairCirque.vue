@@ -83,7 +83,7 @@ export default {
             {
               type: "image",
               style: {
-                image: require("../common/img/icon/bulb.png"),
+                // image: require("../common/img/icon/bulb.png"),
                 width: 20,
                 height: 20
               },
@@ -93,7 +93,7 @@ export default {
             {
               type: "text",
               style: {
-                text: "555",
+                text: "",
                 width: 20,
                 height: 20
               },
