@@ -6,44 +6,41 @@
 export default {
   name: "",
   props: {
-
+    brand: {
+      type: Array
+    }
   },
   data() {
     return {};
   },
   watch: {
-    cmboxBrandPercent() {
-      console.log('1')
-      this.init(this.cmboxBrandPercent)
+    brand() {
+      this.init(this.brand)
     },
-    meterBrandPercent() {
-      console.log('2')
-      this.init(this.meterBrandPercent)
-    },
-    lockBrandPercent() {
-      console.log('3')
-      this.init(this.lockBrandPercent)
-    }
   },
   components: {},
   mounted() {
     
   },
   methods: {
-    init(obj) {
+    init(arr) {
       // 引入echarts
-      console.log("obj", obj)
       const echarts = require("echarts")
       const chart = echarts.init(this.$refs.cirque)
-      var color = ["#19ABF7", "#355E96"], data = []
-      for (let k in obj) {
-        data.push({
-          name: '缺省',
-          value: obj[k]
+      let data = [], color = []
+      if (arr.length === 0) {
+        color = ['#fff']
+        data = [{name: '品牌占比', value: 0}]
+      } else {
+        color = ['#419AFE', '#00FFFB', '#AB85D9', '#C07991', '#6E8B95', '#2CC4CD', '#01BB48', '#CBA00D', '#6F8C41', '#F1AA6C']
+        arr.forEach((item, index) => {
+          color.splice(0, index)
+          data.push({
+            name: item.brandName,
+            value: item.percent
+          })
         })
       }
-
-      console.log('data', data)
       var option = {
         // 图例
         legend: [
@@ -62,16 +59,16 @@ export default {
         // 提示框
         tooltip: {
           show: true, // 是否显示提示框
-          formatter: "b:{b}, c:{c}, d:{d}" // 提示框显示内容,此处{b}表示各数据项名称，此项配置为默认显示项，{c}表示数据项的值，默认不显示，({d}%)表示数据项项占比，默认不显示。
+          formatter: "{b}：{c}%" // 提示框显示内容,此处{b}表示各数据项名称，此项配置为默认显示项，{c}表示数据项的值，默认不显示，({d}%)表示数据项项占比，默认不显示。
         },
         graphic: {
           elements: [
             {
               type: "image",
               style: {
-                image: require("../common/img/icon/bulb.png"),
-                width: 20,
-                height: 20
+                image: require("../common/img/icon/brand.png"),
+                width: 60,
+                height: 50
               },
               left: "center",
               top: "center"
@@ -79,7 +76,7 @@ export default {
             {
               type: "text",
               style: {
-                text: "555",
+                text: "",
                 width: 20,
                 height: 20
               },
@@ -108,23 +105,25 @@ export default {
             name: "圆环图系列名称", // 系列名称
             type: "pie", // 系列类型
             center: ["50%", "50%"], // 饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标。[ default: ['50%', '50%'] ]
-            radius: ["30%", "45%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
+            radius: ["38%", "55%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
             hoverAnimation: true, // 是否开启 hover 在扇区上的放大动画效果。[ default: true ]
             color: color, // 圆环图的颜色
             label: {
               // 饼图图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等.
               normal: {
+                fontSize: 16,
                 show: true, // 是否显示标签[ default: false ]
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
                 formatter: "{b}:{c}%" // 标签内容
+                
               }
             },
             labelLine: {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 15, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
-                length2: 10, // 视觉引导项第二段的长度。
+                length: 3, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length2: 3, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
                   //color: '#000',
@@ -138,10 +137,19 @@ export default {
       };
 
       // 使用刚指定的配置项和数据显示图表
+      console.log('arr.length', arr.length)
+      if (arr.length === 0) {
+        option.graphic.elements[0].style.image = require('common/img/icon/no-data.png')
+      } else {
+        option.graphic.elements[0].style.image = require('common/img/icon/brand.png')
+      }
       chart.setOption(option);
+    },
+    getColor() {
+        return '#'+ Math.random().toString(16).substr(-6)
+      }
     }
   }
-};
 </script>
 
 <style scoped lang="stylus">

@@ -43,15 +43,15 @@ export default {
       var data = [
         {
           name: "在线",
-          value: obj.onlinePercent 
+          value: obj.onlineNumspercent 
         },
         {
           name: "离线",
-          value: obj.offlinePercent
+          value: obj.offlineNumspercent
         },
         {
           name: "未安装",
-          value: obj.nosetPercent 
+          value: obj.notInstalledNumspercent 
         }
       ];
       // 指定图表的配置项和数据
@@ -80,9 +80,9 @@ export default {
             {
               type: "image",
               style: {
-                image: require("../common/img/icon/test.png"),
-                width: 70,
-                height: 60
+                image: require("../common/img/icon/state.png"),
+                width: 60,
+                height: 50
               },
               left: "center",
               top: "center"

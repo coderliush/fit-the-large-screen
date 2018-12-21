@@ -1,21 +1,16 @@
 <template>
   <div class="wrapper">
     <div class="region" v-show="type === 1">
-      <div class="back"><img src="../common/img/icon/back.png" alt=""></div>
       <div class="container">
-        <img src="../common/img/header.png" alt="">
-        <div>
-          <p v-for="(item, index) in mapArr" :key="index">{{index + 1}}.{{item.num}}</p>
-        </div>
+        <el-carousel :interval="4000" indicator-position="none" :height="'520px'" :arrow="'never'">
+          <el-carousel-item v-for="pic in vpics" :key="pic">
+            <img :src="pic" alt="">
+          </el-carousel-item>
+        </el-carousel>
       </div>
-      <p>（上海市徐汇区东航小区南村）</p>
     </div>
     <div class="unit" v-show="type === 2">
-      <div class="title">
-        <p>南村平面图</p>
-        <div class="back"><img src="../common/img/icon/back.png" alt=""></div>
-      </div>
-      <img src="../common/img/header.png" alt="">
+      <div class="img-wrapper"><img :src="cpic" alt=""></div>
     </div>
   </div>
 </template>
@@ -27,6 +22,18 @@ export default {
     type: {
       default: 1,
       type: Number
+    },
+    vpics: {
+      default: null,
+      type: Array
+    },
+    vname :{
+      default: null,
+      type: String
+    },
+    cpic :{
+      default: null,
+      type: String
     }
   },
   data() {
@@ -60,28 +67,26 @@ export default {
 
 <style scoped lang="stylus">
     .wrapper
-      padding 20px
     .region
       .container
         display flex 
         text-align center
         img
-          width 400px
-          height 400px 
-        p 
-          margin 10px 0
+          height 520px!important
         div
           flex 1
-          text-align center
     .unit
       text-align center
       .title
+        margin-bottom 20px
         p
           text-align center
-      > img
-          width 400px
-          height 400px
-
+      .img-wrapper
+        background rgba(8,15,61, 0.5)
+        img 
+          position relative
+          z-index -1
+          height 520px
     
     .back
       text-align right

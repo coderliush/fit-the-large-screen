@@ -61,21 +61,23 @@
           </div>
 
         </div>
-        <p class="header">{{cityname}}</p>
+        <p class="header"><span>{{cityname}}</span></p>
         <div class="body">
-          <div id="map" v-show="!showtype"></div>
-          <RegionDetail :type="showtype" v-show="showtype"></RegionDetail>
+          <div class="map-wrapper">
+            <div id="map" v-show="!showtype"></div>
+          </div>
+          <RegionDetail :type="showtype" :vname="vname" :vpics="vpics" :cpic="cpic" v-show="showtype"></RegionDetail>
         </div>
         <div class="count">
-          <p><span>全国公寓总数：</span><span>{{cellcount}}</span></p>
-          <p><span>全国设备总数：</span><span>{{deviceCount}}</span></p>
+          <p><span>公寓总数：</span><span class="number-active">{{cellcount|splitNum}}</span></p>
+          <p><span>设备总数：</span><span class="number-active">{{deviceCount|splitNum}}</span></p>
         </div>
         <div class="footer">
           <div class="item" v-for="(item, index) in mapArr" :key="index">
             <img :src="item.url" alt>
             <div>
               <p>{{item.name}}</p>
-              <p>{{item.num}}</p>
+              <p class="number-active">{{item.num|splitNum}}</p>
             </div>
           </div>
         </div>
@@ -93,6 +95,12 @@ export default {
   components: {
     RegionDetail
   },
+  filters:{
+    splitNum(num){
+      if(num===null) return '暂无';
+      return (num || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
+    }
+  },
   data() {
     return {
       isActive: true,
@@ -100,22 +108,22 @@ export default {
         {
           name: '门禁总数',
           url: require("common/img/icon/mark1.png"),
-          num: "132.456.79"
+          num: 0
         },
         {
           name: '充电总数',
           url: require("common/img/icon/mark2.png"),
-          num: "132.456.79"
+          num: 0
         },
         {
           name: '流量总数',
           url: require("common/img/icon/mark3.png"),
-          num: "132.456.79"
+          num: null
         },
         {
           name: '用电总数',
           url: require("common/img/icon/mark4.png"),
-          num: "132.456.79"
+          num: null
         }
       ],
       options: [{
@@ -140,6 +148,9 @@ export default {
       celloptions: null,
       cellcount:null,//公寓总数
       deviceCount:null,//设备总数
+      vname:null,//小区名称
+      vpics:null,//小区图片
+      cpic:null//单元图片
     };
   },
   async mounted() {
@@ -182,22 +193,21 @@ export default {
       this.SelectChange(index,selected);
     },
     //获取地图显示数据(行政区)
-    async getdatalist(id,isleaf){
+    async getdatalist(id,isleaf,path){
       var getvillage = null,villages = null;
       if(isleaf)  getvillage = this.$http.get(`/dmp/api/Map/QueryVillage/${id}`);
-      const httpresults = await this.$http.awaitTasks([
-        this.$http.post('/dmp/api/Map/CellCount',{id:id,isleaf:isleaf}),
-        this.$http.post('/dmp/api/Map/DeviceCount',{id:id,isleaf:isleaf})
-      ]);
-      const datalist = httpresults[0];
-      const datalist2 = httpresults[1];
+      const httpresult = await this.$http.post('/dmp/api/Map/MapPointCount',{id:id,isleaf:isleaf,path:path});
+      this.mapArr[0].num = httpresult.openCount;
+      this.mapArr[1].num = httpresult.chargeCount;
+      const datalist = httpresult.cell;
+      //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
       for(var i =0;i<datalist.length;i++){
         var node = datalist[i];
 
-        var node2 = datalist2.find(item=>item.id==node.id);
-        if(node2) node.deviceCount = node2.count;
-        else node.count = 0;
+        //var node2 = datalist2.find(item=>item.id==node.id);
+        //if(node2) node.deviceCount = node2.count;
+        //else node.count = 0;
         node.cellCount = node.count;
         
         var find =null;
@@ -225,28 +235,27 @@ export default {
       this.cellcount = showlist.reduce((p,c)=>{
         return p+c.cellCount;
       },0);
-      this.deviceCount = showlist.reduce((p,c)=>{
-        return p+c.deviceCount;
-      },0);
+      // this.deviceCount = showlist.reduce((p,c)=>{
+      //   return p+c.deviceCount;
+      // },0);
       return showlist;
     },
     //获取地图显示数据(五级架构)
-    async getorgdatalist(id,isleaf){
+    async getorgdatalist(id,isleaf,path){
       var getvillage = null,villages = null;
       if(isleaf)  getvillage = this.$http.get(`/dmp/api/Org/QueryVillage/${id}`);
-      const httpresults = await this.$http.awaitTasks([
-        this.$http.post('/dmp/api/Org/CellCount',{id:id,isleaf:isleaf}),
-        this.$http.post('/dmp/api/Org/DeviceCount',{id:id,isleaf:isleaf})
-      ]);
-      const datalist = httpresults[0];
-      const datalist2 = httpresults[1];
+      const httpresult = await this.$http.post('/dmp/api/Org/MapPointCount',{id:id,isleaf:isleaf,path:path});
+      this.mapArr[0].num = httpresult.openCount;
+      this.mapArr[1].num = httpresult.chargeCount;
+      const datalist = httpresult.cell;
+      //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
       for(var i =0;i<datalist.length;i++){
         var node = datalist[i];
 
-        var node2 = datalist2.find(item=>item.id==node.id);
-        if(node2) node.deviceCount = node2.count;
-        else node.count = 0;
+        // var node2 = datalist2.find(item=>item.id==node.id);
+        // if(node2) node.deviceCount = node2.count;
+        // else node.count = 0;
         node.cellCount = node.count;
 
         var find =null;
@@ -266,9 +275,9 @@ export default {
       this.cellcount = showlist.reduce((p,c)=>{
         return p+c.cellCount;
       },0);
-      this.deviceCount = showlist.reduce((p,c)=>{
-        return p+c.deviceCount;
-      },0);
+      // this.deviceCount = showlist.reduce((p,c)=>{
+      //   return p+c.deviceCount;
+      // },0);
       return showlist;
     },
     //下拉选择事件
@@ -290,10 +299,10 @@ export default {
         if(id==0){
           this.villageoptions = null;//小区选择清除
           if(index!=0){
-            var datalist = await this.getdatalist(this.districtselescts[index-1],false);
+            var node = this.districts.find(item=>item.id==this.districtselescts[index-1]);
+            var datalist = await this.getdatalist(this.districtselescts[index-1],false,node.path);
             this.districtselescts[index]=0;
             this.districtselesctoptions[index]=[{id:0,name:'全部'}, ...datalist];
-            var node = this.districts.find(item=>item.id==this.districtselescts[index-1]);
             this.InitMap(node.name,datalist,node);//刷新地图
           }
           else{
@@ -307,7 +316,7 @@ export default {
           return;
         }
         var node = this.districts.find(item=>item.id==id);
-        var datalist = await this.getdatalist(node.id,node.isleaf);
+        var datalist = await this.getdatalist(node.id,node.isleaf,node.path);
         if (!node.isleaf){ 
           this.villageoptions = null;//小区选择清除
           this.districtselescts.push(0);
@@ -324,15 +333,15 @@ export default {
         if(id==0){
           this.villageoptions = null;//小区选择清除
           if(index!=0){
-            var datalist = await this.getorgdatalist(this.orgselescts[index-1],false);
+            var node = this.orgs.find(item=>item.id==this.orgselescts[index-1]);
+            var datalist = await this.getorgdatalist(this.orgselescts[index-1],false,node.path);
             this.orgselescts[index]=0;
             this.orgselesctoptions[index]=[{id:0,name:'全部'}, ...datalist];
-            var node = this.orgs.find(item=>item.id==this.orgselescts[index-1]);
             this.InitMap(node.name,datalist,node);//刷新地图
           }
           else{
             var rootnode = this.orgs.find(item=>item.parrentid==0);
-            var datalist = await this.getorgdatalist(rootnode.id,false);
+            var datalist = await this.getorgdatalist(rootnode.id,false,rootnode.path);
             this.orgselescts.length = 0;
             this.orgselesctoptions.length = 0;
             this.orgselescts.push(0);
@@ -342,7 +351,7 @@ export default {
           return;
         }
         var node = this.orgs.find(item=>item.id==id);
-        var datalist = await this.getorgdatalist(node.id,node.isleaf);
+        var datalist = await this.getorgdatalist(node.id,node.isleaf,node.path);
         if (!node.isleaf){ 
           this.villageoptions = null;//小区选择清除
           this.orgselescts.push(0);
@@ -357,26 +366,46 @@ export default {
     },
     async SelectVillage(id){
        this.cellselect = null;//清除单元选择
-       var village = this.villageoptions.find(item=>item.id==id);
         if(id==0){//选择全部
-          this.$emit('nodechange',{id:this.orgselescts[this.orgselescts.length-1],type:1});//更新图表
+          //this.$emit('nodechange',{id:this.orgselescts[this.orgselescts.length-1],type:1});//更新图表
           this.showtype = 0;
-          this.celloptions = null;//清除单元选择
+          //this.celloptions = null;//清除单元选择
+          this.SelectChange(this.orgselescts.length-1,this.orgselescts[this.orgselescts.length-1]);
         }
         else{
           this.$emit('nodechange',{id:id,type:3});//更新图表
-          this.showtype=1;
-          const celloptions = await this.$http.get(`/dmp/api/Cell/QueryCell/${id}`);
+          this.showtype = 1;
+          var village = this.villageoptions.find(v=>v.id==id);
+          this.vname = village.name;
+          const httpresults = await this.$http.awaitTasks([
+            this.$http.get(`/dmp/api/Cell/QueryCell/${id}`),
+            this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}`)//1938 ${id}
+          ])
+          const celloptions = httpresults[0];
           this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
+          this.cellselect = 0;
+          this.vpics = httpresults[1].pics;
+          this.mapArr[0].num = httpresults[1].openCount;
+          this.mapArr[1].num = httpresults[1].chargeCount;
+          this.cellcount = httpresults[1].cellCount;
+          // this.deviceCount = httpresults[1].deviceCount;
         }
     },
     async SelectCell(id){
        if(id==0){//选择全部
+          //this.$emit('nodechange',{id:this.villageselect[this.villageselect.length-1],type:1});//更新图表
           this.showtype=1;
+          this.SelectVillage(this.villageselect);
         }
         else{
+          this.$emit('nodechange',{id:id,type:4});//更新图表
           this.showtype=2;
-          //const celloptions = await this.$http.get(`/dmp/api/Map/QueryCell/${id}`);
+          const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}`);//28147 ${id}
+          this.cpic = httpresult.pic;
+          this.mapArr[0].num = httpresult.openCount;
+          this.mapArr[1].num = httpresult.chargeCount;
+          this.cellcount = httpresult.cellCount;
+          // this.deviceCount = httpresult.deviceCount;
           //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
         }
     },
@@ -423,13 +452,37 @@ export default {
       this.SelectChange(0,0);
     },
     async InitMap(cityname,datalist,node) {
+      var type = 0;
+      if(this.villageoptions) type=3;
+      else if(this.isActive) type=1;
+      else type=2;
+      var cachepointdata={};
+      var curshowid=0;
+      var queryDeviceCount = (id)=>{
+        curshowid=id;
+        if(!cachepointdata[id]) cachepointdata[id]=this.$http.post('dmp/api/Map/DeviceCount',{type:type,id:id});
+        return cachepointdata[id];
+      }
+
       this.cityname = cityname;
       if(this.isActive&&cityname==="中国") this.cityname = this.orgs.find(item=>item.parrentid==0).name;
 
       var points = null;
       if(!this.isActive||cityname==="中国"){//是否需要获取边界数据抠图
-        if (!this.CityData[cityname]&&!this.CityData[cityname]!==null)
-        this.CityData[cityname] = this.GetData(cityname,node);
+        if(!this.isActive&&cityname!=="中国"){
+          var nameall=null;
+          for(var j=0;j<this.districtselescts.length;j++){
+            var curname = this.districtselesctoptions[j].find(o=>o.id==this.districtselescts[j]).name;
+            if(curname.indexOf('市')!=-1) nameall=curname;
+            else if(nameall&&curname!='全部'){
+              nameall = nameall + curname;
+            }
+          }
+          if(nameall) cityname = nameall;
+        }
+        if (!this.CityData[cityname]&&this.CityData[cityname]!==null){
+          this.CityData[cityname] = this.GetData(cityname,node);
+        }
         points = await this.CityData[cityname]; //获取城市边界遮挡数据
       }
 
@@ -467,7 +520,7 @@ export default {
                 featureType: "water",
                 elementType: "all",
                 stylers: {
-                  color: "#080E3E"
+                  color: "#053858"
                 }
               },
               {
@@ -617,7 +670,7 @@ export default {
               normal: {
                 formatter: "{b}",
                 position: "right",
-                show: true
+                show: this.villageoptions ? false:true
               }
             },
             itemStyle: {
@@ -629,10 +682,15 @@ export default {
             },
             tooltip: {
               trigger :'item',
-              formatter: function(params){
-                //console.log(params);
+              formatter:(params)=>{
+                // console.log(params);
                 var node = params.value[2];
-                return `${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}`;
+                if(node.deviceCount) return `${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}`;
+                queryDeviceCount(node.id).then(deciveCount=>{
+                  node.deviceCount = deciveCount
+                  if(curshowid==node.id) mapdiv.firstElementChild.innerHTML=`${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${deciveCount}`
+                });
+                return `${node.name}<br />公寓总数:${node.cellCount}`;//<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}
               }
             },
             zlevel: 1
@@ -665,11 +723,11 @@ export default {
       if((!this.isActive||cityname==="中国")&&points){
         this.curlay = new BMap.Polygon(points, {
           strokeColor: "none",
-          fillColor: "#080E3E",
+          fillColor: "rgba(0, 0, 0, 0.5)",
           fillOpacity: 1,
           strokeOpacity: 0.5
         }); //建立多边形覆盖物
-        this.bMap.addOverlay(this.curlay); //添加覆盖物"#080E3E"
+        this.bMap.addOverlay(this.curlay); //添加覆盖物"#053858"
       }
 
       // if (cityname === "中国") {
@@ -817,11 +875,13 @@ export default {
 
 <style scoped lang="stylus">
 @import '~common/stylus/variable.styl';
+.number-active {
+  color: $number-active;
+  font-weight: bold;
+}
 
 .title {
   display: flex;
-  position: relative;
-  left: 40px;
   .tab1.active {
     color: #050230 !important;
     background: #00FFFB !important;
@@ -832,9 +892,10 @@ export default {
     border-bottom:30px solid #00FFFB!important;
   }
 
-
   .tab1 {
     display: flex;
+    position: relative;
+    left: 40px;
     align-items: center;
     position: relative;
     z-index:999;
@@ -850,7 +911,7 @@ export default {
 
   .tab2 {
     position: relative;
-    left: -14px;
+    left: 25px;
     width:100px;
     height:0;
     border-bottom:30px solid #1559A0;
@@ -858,10 +919,10 @@ export default {
     border-top-right-radius: 6px;
     cursor: pointer;
     &::before {
-      content: "行政区切换";
+      content: "行政区";
 			position: absolute;
-			top: 8px;
-			left: 0;
+			top: 6px;
+			left: 6px;
 			right: 0;
 			bottom: 0;
 			z-index: 1;
@@ -878,24 +939,32 @@ export default {
     border-top: 1px solid #2F93C1;
     border-bottom: 1px solid #2F93C1;
     .select-wrapper {
-      margin: 10px;
+      margin: 4px 0;
       .el-select {
-        width: 100px;
-        margin: 10px 10px;
+        width: 120px;
+        margin: 10px 4px;
+      }
+      .el-select:nth-of-type(1) {
+        margin-left: 0;
+      }
+      .el-select:nth-of-type(6) {
+        margin-right: 0;
       }
     }
     .header {
-      text-align: center;
-      margin: 10px 0;
+      position: absolute;
+      left: 36.2%;
     }
     .body {
-        width: 800px;
-        height: 600px;
-        border: 10px solid #1F406A;
-      #map {
-        width: 800px;
-        height: 600px;
-      }
+        min-height: 600px;
+        padding: 50px;
+        background: url('../common/img/mapBg.png') no-repeat;  
+        background-size: 100% 100%;
+        .map-wrapper {
+          #map {
+            height: 600px;
+          }
+        }
       .community {
         display: flex;
         img {
@@ -905,13 +974,14 @@ export default {
     }
     .count {
       position: relative;
-      top: -78px;
-      left: 40px;
+      top: -72px;
+      left: 32px;
       height: 0;
       p {
         margin-bottom: 10px;
         span:nth-of-type(2) {
-          color: $color-active
+          color: $number-active
+          font-weight: bold;
         }
       }  
     }
@@ -919,7 +989,7 @@ export default {
 
   .footer {
     display: flex;
-    margin: 20px 0;
+    margin: 10px 0;
     .item {
       flex: 1;
       display: flex;

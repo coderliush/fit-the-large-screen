@@ -22,7 +22,7 @@ export default {
     justify-content center
     background url('../common/img/header.png') 
     background-size 100% 100%
-    padding 28px
+    padding 18px
     color $color-active
     letter-spacing 2px
     .title 
