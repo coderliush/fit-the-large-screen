@@ -5,7 +5,7 @@
       <div class="tab2" @click="tab2" :class="!isActive ? 'active' : null"></div>
     </div>
     <div class="main">
-      <img src="../common/img/map-left.png" alt>
+      <img class="border-img" src="../common/img/map-left.png" alt>
       <div class="container">
         <div class="select-wrapper">
           <div class="select1" v-show="isActive">
@@ -61,11 +61,11 @@
           </div>
 
         </div>
-        <p class="header"><span>{{cityname}}</span></p>
+        <div class="header-wrapper"> 
+          <p class="header">{{cityname}}</p>
+        </div>
         <div class="body">
-          <div class="map-wrapper">
-            <div id="map" v-show="!showtype"></div>
-          </div>
+          <div id="map" v-show="!showtype"></div>
           <RegionDetail :type="showtype" :vname="vname" :vpics="vpics" :cpic="cpic" v-show="showtype"></RegionDetail>
         </div>
         <div class="count">
@@ -82,7 +82,7 @@
           </div>
         </div>
       </div>
-      <img src="../common/img/map-right.png" alt>
+      <img class="border-img" src="../common/img/map-right.png" alt>
     </div>
   </div>
 </template>
@@ -376,7 +376,7 @@ export default {
           this.$emit('nodechange',{id:id,type:3});//更新图表
           this.showtype = 1;
           var village = this.villageoptions.find(v=>v.id==id);
-          this.vname = village.name;
+          this.cityname = village.name;
           const httpresults = await this.$http.awaitTasks([
             this.$http.get(`/dmp/api/Cell/QueryCell/${id}`),
             this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}`)//1938 ${id}
@@ -399,6 +399,8 @@ export default {
         }
         else{
           this.$emit('nodechange',{id:id,type:4});//更新图表
+          var cell = this.celloptions.find(v=>v.id==id);
+          this.cityname = cell.address;
           this.showtype=2;
           const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}`);//28147 ${id}
           this.cpic = httpresult.pic;
@@ -507,7 +509,8 @@ export default {
           }
         },
         tooltip: {
-          trigger: "item"
+          trigger: "item",
+          padding: 0,
         },
         bmap: {
           center: [this.$center.lng, this.$center.lat],
@@ -682,15 +685,17 @@ export default {
             },
             tooltip: {
               trigger :'item',
+              position: 'top',
               formatter:(params)=>{
                 // console.log(params);
                 var node = params.value[2];
-                if(node.deviceCount) return `${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}`;
+                if(node.deviceCount) return `<div class="tooltip-wrapper">${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}</div>`;
                 queryDeviceCount(node.id).then(deciveCount=>{
                   node.deviceCount = deciveCount
-                  if(curshowid==node.id) mapdiv.firstElementChild.innerHTML=`${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${deciveCount}`
+                  if(curshowid==node.id) mapdiv.firstElementChild.innerHTML=`<div class="tooltip-wrapper">${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${deciveCount}</div>`
                 });
-                return `${node.name}<br />公寓总数:${node.cellCount}`;//<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}
+                // return `${node.name}<br />公寓总数:${node.cellCount}`;//<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}
+                return `<div class="tooltip-wrapper">${node.name}<br />公寓总数:${node.cellCount}</div>`;
               }
             },
             zlevel: 1
@@ -873,11 +878,31 @@ export default {
 };
 </script>
 
-<style scoped lang="stylus">
+<style lang="stylus">
 @import '~common/stylus/variable.styl';
 .number-active {
   color: $number-active;
   font-weight: bold;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  width: 120px;
+  height: 65px;
+  padding: 6px 0 6px 10px;
+  border-radius: 3px;
+  background: #1C9AA8;
+}
+
+.tooltip-wrapper:before {
+  content: '';
+  position: absolute;  
+  bottom: -6px;
+  left: 54px;
+  width: 3px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #1C9AA8;
 }
 
 .title {
@@ -934,12 +959,16 @@ export default {
 .main {
   display: flex;
   position: relative;
+  .border-img {
+        height 720px;
+  }
   .container {
+    position: relative;
     flex: 1;
     border-top: 1px solid #2F93C1;
     border-bottom: 1px solid #2F93C1;
     .select-wrapper {
-      margin: 4px 0;
+      margin: 6px 0;
       .el-select {
         width: 120px;
         margin: 10px 4px;
@@ -953,17 +982,22 @@ export default {
     }
     .header {
       position: absolute;
-      left: 36.2%;
+      left: 0;
+      right: 0;
+      margin: auto;
+      text-align: center;
     }
     .body {
         min-height: 600px;
-        padding: 50px;
         background: url('../common/img/mapBg.png') no-repeat;  
-        background-size: 100% 100%;
-        .map-wrapper {
-          #map {
-            height: 600px;
-          }
+        background-size: 100% 95%;
+        position: relative;
+        top: -3px;
+        #map {
+            height: 600px;  //完整地图的高度
+            transform: scale(0.8, 0.8)
+            position: relative;
+            top: -19px
         }
       .community {
         display: flex;
@@ -973,9 +1007,9 @@ export default {
       }
     }
     .count {
-      position: relative;
-      top: -72px;
-      left: 32px;
+      position: absolute;
+      bottom: 184px;
+      left: 88px;
       height: 0;
       p {
         margin-bottom: 10px;
@@ -989,7 +1023,8 @@ export default {
 
   .footer {
     display: flex;
-    margin: 10px 0;
+    position: relative;
+    top: -9px;
     .item {
       flex: 1;
       display: flex;

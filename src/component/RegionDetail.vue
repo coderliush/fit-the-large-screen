@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="region" v-show="type === 1">
-      <div class="container">
+      <div class="img-carousel">
         <el-carousel :interval="4000" indicator-position="none" :height="'520px'" :arrow="'never'">
           <el-carousel-item v-for="pic in vpics" :key="pic">
             <img :src="pic" alt="">
@@ -67,8 +67,9 @@ export default {
 
 <style scoped lang="stylus">
     .wrapper
+      padding 50px
     .region
-      .container
+      .img-carousel
         display flex 
         text-align center
         img
@@ -85,8 +86,7 @@ export default {
         background rgba(8,15,61, 0.5)
         img 
           position relative
-          z-index -1
-          height 520px
+          opacity .6
     
     .back
       text-align right

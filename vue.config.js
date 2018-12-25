@@ -6,6 +6,7 @@ function resolve(dir) {
 module.exports = {
   chainWebpack: config => {
     config.resolve.alias
+      .set('page', resolve('src/page'))
       .set('common', resolve('src/common'))
       .set('component', resolve('src/component'))
   },

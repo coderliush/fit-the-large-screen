@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="item" style="margin: .6rem 0">
+    <div class="item">
       <div class="title">
         <div class="left">
           <img src="../common/img/title-left.png" alt="">
@@ -16,18 +16,17 @@
         </div>
       </div>
       <div class="container">
-        <img src="../common/img/border-left.png" alt="">
+        <img class="border" src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
           <state-cirque class="item" :cmbox="cmbox"></state-cirque>
           <repair-cirque class="item" :cmbox="cmbox"></repair-cirque>
-          <brand-cirque class="item" v-show="cmboxData" :brand="cmbox.brands"></brand-cirque>
-          <p class="item tooltip" v-show="!cmboxData">暂无数据</p>
+          <brand-cirque class="item" :brand="cmbox.brands"></brand-cirque>
         </div>
-        <img src="../common/img/border-right.png" alt="">
+        <img class="border" src="../common/img/border-right.png" alt="">
       </div>
     </div>
 
-    <div class="item" style="margin: 24px 0">
+    <div class="item" style="margin: 20px 0">
       <div class="title">
         <div class="left">
           <img src="../common/img/title-left.png" alt="">
@@ -43,14 +42,13 @@
         </div>
       </div>
       <div class="container">
-        <img src="../common/img/border-left.png" alt="">
+        <img class="border" src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
           <state-cirque class="item" :meterbox="meterbox"></state-cirque>
           <repair-cirque class="item" :meterbox="meterbox"></repair-cirque>
-          <brand-cirque class="item" v-show="meterboxData" :brand="meterbox.brands"></brand-cirque>
-          <p class="item tooltip" v-show="!meterboxData">暂无数据</p>
+          <brand-cirque class="item" :brand="meterbox.brands"></brand-cirque>
         </div>
-        <img src="../common/img/border-right.png" alt="">
+        <img class="border" src="../common/img/border-right.png" alt="">
       </div>
     </div>
 
@@ -72,13 +70,13 @@
         </div>
       </div>
       <div class="container">
-        <img src="../common/img/border-left.png" alt="">
+        <img class="border" src="../common/img/border-left.png" alt="">
         <div class="cirque-wrapper">
           <state-cirque class="item" :lock="lock"></state-cirque>
           <repair-cirque class="item" :lock="lock"></repair-cirque>
           <brand-cirque class="item" :brand="lock.brands"></brand-cirque>
         </div>
-        <img src="../common/img/border-right.png" alt="">
+        <img class="border" src="../common/img/border-right.png" alt="">
       </div>
     </div>
   </div>
@@ -96,9 +94,6 @@ export default {
       cmbox: {},
       meterbox: {},
       lock: {},
-      cmboxData: true,
-      meterboxData: true,
-      lockData: true,
     }
   },
   filters: {
@@ -117,13 +112,6 @@ export default {
       this.cmbox = obj.cmbox
       this.meterbox = obj.meterbox
       this.lock = obj.lock
-      for (let k in obj) {
-        if (obj[k].brands.length === 0) {
-          this[k + 'Data'] = false
-        } else {
-          this[k + 'Data'] = true
-        }
-      }
     },
   },
   mounted() {
@@ -132,7 +120,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import '~common/stylus/variable'
+@import '~common/stylus/variable' 
   .wrapper 
     display flex
     flex-direction column
@@ -140,7 +128,7 @@ export default {
     .title
       display flex
       position relative
-      left 22px
+      left 28px
       .left
         display flex
         margin-right 15px
@@ -165,10 +153,13 @@ export default {
     .container
       display flex
       justify-content center
+      .border 
+        height 250px
       .cirque-wrapper
         flex 1
         display flex
-        background url('../common/img/border.png')
+        border-top 1px solid #3C8AB6
+        border-bottom 1px solid #3C8AB6
         .item
           width 300px
         .tooltip

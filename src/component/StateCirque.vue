@@ -39,7 +39,7 @@ export default {
       // 引入echarts
       const echarts = require("echarts");
       const chart = echarts.init(this.$refs.cirque)
-      var color = ["#79C171", "#FB62B5", "#19ABF7"]
+      var color = ["#21a9fa", "#e55fab", "#80c269"]
       var data = [
         {
           name: "在线",
@@ -119,13 +119,14 @@ export default {
             name: "圆环图系列名称", // 系列名称
             type: "pie", // 系列类型
             center: ["50%", "50%"], // 饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标。[ default: ['50%', '50%'] ]
-            radius: ["40%", "55%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
+            radius: ["40%", "60%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
             hoverAnimation: true, // 是否开启 hover 在扇区上的放大动画效果。[ default: true ]
             color: color, // 圆环图的颜色
             label: {
               // 饼图图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等.
               normal: {
                 show: true, // 是否显示标签[ default: false ]
+                fontSize: 16,
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
                 formatter: "{b}:{c}%" // 标签内容
               }
@@ -134,8 +135,8 @@ export default {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 10, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
-                length2: 10, // 视觉引导项第二段的长度。
+                length: 6, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length2: 6, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
                   //color: '#000',

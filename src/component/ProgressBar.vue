@@ -6,15 +6,19 @@
         <img src="../common/img/icon/bulb.png" alt="">
         设备装填-【全国/运营管理本部】</p>
       <marquee direction=up Height=40 Loop=-1 Scrollamount=1 class="roll-wrapper">
-        <div class="roll" v-for="(item, index) in warn" :key="index">
-          <img src="../common/img/icon/notice.png" alt="">
-          <span>{{item}}</span>
+        <div class="roll" v-for="(item, index) in warnList" :key="index">
+          <div v-for="(each, key) in item" :key="key"> 
+            <div class="each" v-for="(value, type) in each" :key="type">
+              <img src="../common/img/icon/notice.png" alt="">
+              当下{{key}}/发生【{{value}}】【{{type}}】
+            </div>
+          </div>
         </div >
       </marquee>
       <img src="../common/img/title-right.png" alt="">
     </div>
     <div class="count-group">
-      <img src="../common/img/border-left.png" alt="">
+      <img class="border-img" src="../common/img/border-left.png" alt="">
         <div class="item">
           <div class="sub">
             <img src="../common/img/icon/online.png" alt="">
@@ -138,7 +142,7 @@
             </p>
           </div>
         </div>
-      <img src="../common/img/border-right.png" alt="">
+      <img class="border-img" src="../common/img/border-right.png" alt="">
     </div>
   </div>
 </template>
@@ -151,7 +155,7 @@ export default {
       cmbox: {},
       meterbox: {},
       lock: {},
-      warn: {},
+      warnList: [],
     }
   },
   components: {},
@@ -159,10 +163,35 @@ export default {
     this.warn = await this.$http.post('dmp/api/CurrentWarning/GetList')
   },
   methods: {
-    flush({cmbox, meterbox, lock}) {
-      this.cmbox = cmbox
-      this.meterbox = meterbox
-      this.lock = lock
+    flush({cmbox, meterbox, lock, warnPercent}) {
+      let obj = {cmbox, meterbox, lock}
+      this.cmbox = obj.cmbox
+      this.meterbox = obj.meterbox
+      this.lock = obj.lock
+
+      const map = {
+        cmbox: '智能网关',
+        meterbox: '智能电表',
+        lock: '智能锁'
+      }
+      for (let k in obj) {
+        const type = {}
+        if (obj[k].onlineNumspercent > warnPercent) {
+          type['在线'] = obj[k]['onlineNums']
+        }
+        if (obj[k].offlineNumspercent > warnPercent) {
+          type['离线'] = obj[k]['offlineNums']
+        } 
+        if (obj[k].repaireNumspercent > warnPercent) {
+          type['维修'] = obj[k]['repaireNums']
+        }
+        if (obj[k].notInstalledNumspercent > warnPercent) {
+          type['未安装'] = obj[k]['notInstalledNums']
+        }
+
+        this.warnList.push({[map[k]]: type})
+      }
+      console.log('this.warnList', this.warnList)
     },
   },
 }
@@ -190,7 +219,7 @@ export default {
       .roll-wrapper
         position absolute 
         right 22px
-        .roll
+        .roll .each
           display flex
           justify-content flex-end
           font-size $font-small
@@ -205,13 +234,16 @@ export default {
         background #1559A0  
     .count-group
       display flex
+      .border-img
+        height 180px
       .item
         flex 1
         display flex
         flex-direction column
-        padding 34px 0
+        padding 18px 0
         font-size $font-normal
-        background url('../common/img/border.png')
+        border-top 1px solid #3C8AB6
+        border-bottom 1px solid #3C8AB6
         .sub
           display flex
           align-items center
@@ -227,13 +259,15 @@ export default {
           font-size $font-small
           p:nth-of-type(2)
             min-width 100px
+            padding-right 20px
+            text-align right
           .label
             width 28px
           .el-progress
             flex 1
             margin 0 15px
           .data .data-already
-            color #01FAFE 
+            color #01FAFE     
       .item:nth-of-type(2)
         padding-left 20px
         padding-right 20px

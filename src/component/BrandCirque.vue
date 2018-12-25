@@ -29,12 +29,12 @@ export default {
       const chart = echarts.init(this.$refs.cirque)
       let data = [], color = []
       if (arr.length === 0) {
-        color = ['#fff']
+        color = ['#91D2FA']
         data = [{name: '品牌占比', value: 0}]
       } else {
-        color = ['#419AFE', '#00FFFB', '#AB85D9', '#C07991', '#6E8B95', '#2CC4CD', '#01BB48', '#CBA00D', '#6F8C41', '#F1AA6C']
+        color = ['#345A97', '#E55EAB', '#10B3C5', '#DBBD00']
         arr.forEach((item, index) => {
-          color.splice(0, index)
+          color.slice(0, index)
           data.push({
             name: item.brandName,
             value: item.percent
@@ -105,25 +105,35 @@ export default {
             name: "圆环图系列名称", // 系列名称
             type: "pie", // 系列类型
             center: ["50%", "50%"], // 饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标。[ default: ['50%', '50%'] ]
-            radius: ["38%", "55%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
+            radius: ["40%", "60%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
             hoverAnimation: true, // 是否开启 hover 在扇区上的放大动画效果。[ default: true ]
             color: color, // 圆环图的颜色
             label: {
               // 饼图图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等.
               normal: {
-                fontSize: 16,
                 show: true, // 是否显示标签[ default: false ]
+                fontSize: 16,
+                align: 'left',
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
-                formatter: "{b}:{c}%" // 标签内容
-                
+                formatter:  function (obj) {
+                  if (obj.name.indexOf('网关') !=1) { return `${obj.name}\n{hr|}\n${obj.value}%`
+                  } else {
+                    return `${obj.name}:${obj.value}%`
+                  } 
+                },
+                rich: {
+                  hr: {
+                    height: 0,
+                  }
+                }
               }
             },
             labelLine: {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 3, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
-                length2: 3, // 视觉引导项第二段的长度。
+                length: 6, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length2: 6, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
                   //color: '#000',
@@ -137,10 +147,10 @@ export default {
       };
 
       // 使用刚指定的配置项和数据显示图表
-      console.log('arr.length', arr.length)
       if (arr.length === 0) {
         option.graphic.elements[0].style.image = require('common/img/icon/no-data.png')
       } else {
+        console.log('brand.png')
         option.graphic.elements[0].style.image = require('common/img/icon/brand.png')
       }
       chart.setOption(option);

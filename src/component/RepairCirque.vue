@@ -133,23 +133,29 @@ export default {
             name: "圆环图系列名称", // 系列名称
             type: "pie", // 系列类型
             center: ["50%", "50%"], // 饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标。[ default: ['50%', '50%'] ]
-            radius: ["40%", "55%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
+            radius: ["40%", "60%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
             hoverAnimation: true, // 是否开启 hover 在扇区上的放大动画效果。[ default: true ]
             color: color, // 圆环图的颜色
             label: {
               // 饼图图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等.
               normal: {
+                fontSize: 16,
                 show: true, // 是否显示标签[ default: false ]
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
-                formatter: "{b}:{c}%" // 标签内容
+                formatter: function (obj) {
+                  if (obj.value > 30 && obj.value < 70) {
+                    return `${obj.name}:\n${obj.value}%`
+                  }
+                  return  `${obj.name}:${obj.value}%`
+                }
               }
             },
             labelLine: {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 15, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
-                length2: 10, // 视觉引导项第二段的长度。
+                length: 6, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length2: 6, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
                   //color: '#000',
