@@ -2,10 +2,10 @@
   <div class="map">
     <div class="title">
       <div class="tab1" @click="tab1" :class="isActive ? 'active' : null"><p>运营</p></div>
-      <div class="tab2" @click="tab2" :class="!isActive ? 'active' : null"></div>
+      <div class="tab2" @click="tab2" :class="!isActive ? 'active' : null"><p>行政区</p></div>
     </div>
     <div class="main">
-      <img class="border-img" src="../common/img/map-left.png" alt>
+      <img class="border-img map-left" src="../common/img/map-left.png" alt>
       <div class="container">
         <div class="select-wrapper">
           <div class="select1" v-show="isActive">
@@ -14,7 +14,6 @@
               :key="index"
               v-model="orgselescts[index]"
               @change="SelectChange(index,orgselescts[index])"
-              placeholder="请选择"
             >
               <el-option
                 v-for="(org,j) in orgs"
@@ -48,7 +47,6 @@
               :key="index"
               v-model="districtselescts[index]"
               @change="SelectChange(index,districtselescts[index])"
-              placeholder="请选择"
             >
               <el-option
                 v-for="(district,j) in districts"
@@ -64,9 +62,10 @@
         <div class="header-wrapper"> 
           <p class="header">{{cityname}}</p>
         </div>
-        <div class="body">
+        <div class="body" id="bodymap">
           <div id="map" v-show="!showtype"></div>
-          <RegionDetail :type="showtype" :vname="vname" :vpics="vpics" :cpic="cpic" v-show="showtype"></RegionDetail>
+          <div id="mappic" v-show="!showtype"></div>
+          <RegionDetail :type="showtype" :vname="vname" :vpic="vpic" :cpic="cpic" v-show="showtype"></RegionDetail>
         </div>
         <div class="count">
           <p><span>公寓总数：</span><span class="number-active">{{cellcount|splitNum}}</span></p>
@@ -82,7 +81,7 @@
           </div>
         </div>
       </div>
-      <img class="border-img" src="../common/img/map-right.png" alt>
+      <img class="border-img map-right" src="../common/img/map-right.png" alt>
     </div>
   </div>
 </template>
@@ -149,7 +148,8 @@ export default {
       cellcount:null,//公寓总数
       deviceCount:null,//设备总数
       vname:null,//小区名称
-      vpics:null,//小区图片
+      vpics:null,//小区图片数组
+      vpic:null,//数组第一张
       cpic:null//单元图片
     };
   },
@@ -166,6 +166,15 @@ export default {
     // this.districtselescts.push(0);
     this.orgs = await getorg;
     this.init();
+   
+    // document.getElementById("#map").omo = e =>{
+    //    var mouseoverEvent = new Event('mouseover');
+    //    this.myChart.dispatchEvent(myEvent);
+    // }
+    // document.getElementById("#map").onmouseover = e =>{
+    //    var mouseoverEvent = new Event('mouseover');
+    //    this.myChart.dispatchEvent(myEvent);
+    // }
     //this.SelectChange(0,0);
     // setTimeout(() => this.init(), 300);
   },
@@ -385,6 +394,8 @@ export default {
           this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
           this.cellselect = 0;
           this.vpics = httpresults[1].pics;
+          // 小区图片只取一张;
+          this.vpic = this.vpics.splice(0, 1)
           this.mapArr[0].num = httpresults[1].openCount;
           this.mapArr[1].num = httpresults[1].chargeCount;
           this.cellcount = httpresults[1].cellCount;
@@ -452,6 +463,28 @@ export default {
       this.curCityName = "中国";
       //this.InitMap(this.curCityName);
       this.SelectChange(0,0);
+
+      var chartmap = this.myChart;
+      var canvas = null;
+      var eventtrigger = (e,ename)=>{
+       if(!canvas){
+         var canvass = document.getElementById("bodymap").querySelectorAll("canvas");
+         if(canvass.length) canvas = canvass[canvass.length-1];
+         else return;
+       } 
+       var ev = document.createEvent('MouseEvents');
+       ev.initMouseEvent(ename,true,true,e.view,e.detail,e.screenX,e.screenY,e.clientX,e.clientY,e.ctrlKey,e.altKey,e.shiftKey,e.metaKey,e.button,e.relatedTarget,e.offsetX,e.offsetY);
+       canvas.dispatchEvent(ev);
+      }
+      document.getElementById("mappic").onmouseover = e =>{
+        eventtrigger(e,'mouseover');
+      };
+      document.getElementById("mappic").onmousemove = e =>{
+        eventtrigger(e,'mousemove');
+      };
+      document.getElementById("mappic").onmouseout = e =>{
+        eventtrigger(e,'mouseout');
+      };
     },
     async InitMap(cityname,datalist,node) {
       var type = 0;
@@ -492,7 +525,7 @@ export default {
       let view = this.getZoom(cityname,datalist);
       this.$zoom = view.zoom;
       this.$center = view.center;
-      if(!this.isActive||cityname==="中国") this.$center =this.CityCenter[cityname];
+      if(cityname==="中国") this.$center =this.CityCenter[cityname];
 
       var serietype = 'effectScatter';
       if(this.villageoptions) serietype='scatter';
@@ -511,6 +544,9 @@ export default {
         tooltip: {
           trigger: "item",
           padding: 0,
+          textStyle: {
+            fontSize: 18
+          }
         },
         bmap: {
           center: [this.$center.lng, this.$center.lat],
@@ -671,6 +707,7 @@ export default {
             //hoverAnimation: true,
             label: {
               normal: {
+                fontSize: 20,
                 formatter: "{b}",
                 position: "right",
                 show: this.villageoptions ? false:true
@@ -704,6 +741,7 @@ export default {
       };
 
       if (this.curlay) this.bMap.removeOverlay(this.curlay); //删除当前图层
+      if (this.curlayline) this.bMap.removeOverlay(this.curlayline); //删除当前虚线
       this.myChart.clear();
       const mapdiv = document.getElementById("map");
       for (var i = mapdiv.children.length - 2; i > -1; i--) {
@@ -729,10 +767,14 @@ export default {
         this.curlay = new BMap.Polygon(points, {
           strokeColor: "none",
           fillColor: "rgba(0, 0, 0, 0.5)",
+          // fillColor: "#053858",
           fillOpacity: 1,
           strokeOpacity: 0.5
         }); //建立多边形覆盖物
+        this.curlayline = new BMap.Polyline( this.CityBoundaryData[cityname], {strokeColor:"blue", strokeWeight:2, strokeOpacity:1,strokeStyle:'dashed'});   //创建折线
         this.bMap.addOverlay(this.curlay); //添加覆盖物"#053858"
+        if(cityname!=="中国")
+          this.bMap.addOverlay(this.curlayline); //添加覆盖物"#053858"
       }
 
       // if (cityname === "中国") {
@@ -846,11 +888,13 @@ export default {
       if (!this.bMap) return {center:new BMap.Point(104.114129, 37.550339),zoom:5};
       if (cityname === "中国") return {center:new BMap.Point(104.114129, 37.550339), zoom:5};
       if(this.CityBoundaryData[cityname]){//有边界数据 按边界数计算
-        return this.bMap.getViewport(this.CityBoundaryData[cityname]);
+       return this.bMap.getViewport(this.CityBoundaryData[cityname]);
       }
       else{//没有边界数据 按展示的点计算
         var points = datalist.map(p => new BMap.Point(p.lng, p.lat));
-        return this.bMap.getViewport(points);
+        var result = this.bMap.getViewport(points);
+        if(points.length==2) result.zoom-=1;
+        return result;
       }
     },
     convertData(data) {
@@ -887,8 +931,8 @@ export default {
 
 .tooltip-wrapper {
   position: relative;
-  width: 120px;
-  height: 65px;
+  width: 150px;
+  height: 80px;
   padding: 6px 0 6px 10px;
   border-radius: 3px;
   background: #1C9AA8;
@@ -898,7 +942,7 @@ export default {
   content: '';
   position: absolute;  
   bottom: -6px;
-  left: 54px;
+  left: 70px;
   width: 3px;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
@@ -908,50 +952,36 @@ export default {
 .title {
   display: flex;
   .tab1.active {
-    color: #050230 !important;
-    background: #00FFFB !important;
+    color: #fff;
+    background: url('../common/img/tab1-active.png') no-repeat
   }
   .tab2.active {
-    color: #050230 !important;
-    background: #fff !important;
-    border-bottom:30px solid #00FFFB!important;
+    color: #fff;
+    background: url('../common/img/tab2-active.png') no-repeat
   }
 
   .tab1 {
+    width: 138px;
     display: flex;
     position: relative;
-    left: 40px;
+    left: 26px;
     align-items: center;
-    position: relative;
-    z-index:999;
-    padding: 0 20px;
-    transform: skew(-45deg)
-    color: #459EFF;
-    background: #1559A0;
     cursor: pointer;
-    > p {
-      transform: skew(45deg);
+    background: url('../common/img/tab1.png') no-repeat
+    p {
+      padding: 10px 0 6px 47px
     }
   }
 
   .tab2 {
     position: relative;
-    left: 25px;
-    width:100px;
-    height:0;
-    border-bottom:30px solid #1559A0;
-    border-left:30px solid transparent;
-    border-top-right-radius: 6px;
+    left: -7px;
+    width:350px;
     cursor: pointer;
-    &::before {
-      content: "行政区";
-			position: absolute;
-			top: 6px;
-			left: 6px;
-			right: 0;
-			bottom: 0;
-			z-index: 1;
-			background: red;
+    background: url('../common/img/tab2.png') no-repeat;
+    p {
+      margin-top: 9px;
+      text-align: center;
     }
   }
 }
@@ -960,18 +990,19 @@ export default {
   display: flex;
   position: relative;
   .border-img {
-        height 720px;
+    height 744px;
   }
   .container {
     position: relative;
     flex: 1;
     border-top: 1px solid #2F93C1;
     border-bottom: 1px solid #2F93C1;
+    height: 742px;
     .select-wrapper {
       margin: 6px 0;
       .el-select {
-        width: 120px;
-        margin: 10px 4px;
+        width: 137px;
+        margin: 0 4px;
       }
       .el-select:nth-of-type(1) {
         margin-left: 0;
@@ -982,22 +1013,36 @@ export default {
     }
     .header {
       position: absolute;
+      z-index: 99;
+      top: 54px;
       left: 0;
       right: 0;
       margin: auto;
       text-align: center;
     }
     .body {
-        min-height: 600px;
-        background: url('../common/img/mapBg.png') no-repeat;  
-        background-size: 100% 95%;
+        width: 880px;
+        height: 750px;
+        //background: url('../common/img/mapBg.png') no-repeat;  
+        background-size: 100% 82%;
         position: relative;
-        top: -3px;
+        top: 4px;
         #map {
-            height: 600px;  //完整地图的高度
-            transform: scale(0.8, 0.8)
+            width: 948px;
+            height: 861px;  //完整地图的高度
+            transform: scale(0.927, 0.7);
             position: relative;
-            top: -19px
+            z-index: -1;
+            top: -119px;
+            left: -34px;
+        }
+        #mappic {
+            width: 880px;
+            height: 750px;  //完整地图的高度
+            position: relative;
+            background: url('../common/img/mapBg.png') no-repeat; 
+            background-size: 100% 82%;
+            top: -861px;
         }
       .community {
         display: flex;
@@ -1008,8 +1053,9 @@ export default {
     }
     .count {
       position: absolute;
-      bottom: 184px;
-      left: 88px;
+      z-index: 999;
+      bottom: 160px;
+      left: 52px;
       height: 0;
       p {
         margin-bottom: 10px;
@@ -1024,7 +1070,7 @@ export default {
   .footer {
     display: flex;
     position: relative;
-    top: -9px;
+    top: -114px;
     .item {
       flex: 1;
       display: flex;

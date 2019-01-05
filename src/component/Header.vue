@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="title">青客物联网监控面板V1.0.0.0</div>
+    <div class="title">青客物联网监控面板</div>
   </div>
 </template>
 
@@ -26,6 +26,8 @@ export default {
     color $color-active
     letter-spacing 2px
     .title 
+      position relative
+      top -10px
       font-size $font-big 
       font-weight bold
       background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(217, 242, 251, 1)), to(rgba(144, 215, 235, 1)))

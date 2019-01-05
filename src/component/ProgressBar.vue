@@ -1,10 +1,9 @@
 <template>
   <div class="progress">
     <div class="title">
-      <img src="../common/img/title-left.png" alt="">
       <p>
         <img src="../common/img/icon/bulb.png" alt="">
-        设备装填-【全国/运营管理本部】</p>
+        【运营管理本部】设备状态</p>
       <marquee direction=up Height=40 Loop=-1 Scrollamount=1 class="roll-wrapper">
         <div class="roll" v-for="(item, index) in warnList" :key="index">
           <div v-for="(each, key) in item" :key="key"> 
@@ -15,7 +14,6 @@
           </div>
         </div >
       </marquee>
-      <img src="../common/img/title-right.png" alt="">
     </div>
     <div class="count-group">
       <img class="border-img" src="../common/img/border-left.png" alt="">
@@ -26,7 +24,7 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.onlineNumspercent" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.onlineNumspercent" color="#80c269"></el-progress>
             <p class="data">
               <span class="data-already">{{cmbox.onlineNums}}</span>
               <span class="data-all">/{{cmbox.totalNums}}</span>
@@ -34,7 +32,7 @@
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.onlineNumspercent" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.onlineNumspercent" color="#80c269"></el-progress>
             <p class="data">
               <span class="data-already">{{meterbox.onlineNums}}</span>
               <span class="data-all">/{{meterbox.totalNums}}</span>
@@ -42,7 +40,7 @@
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.onlineNumspercent" color="#80C268"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.onlineNumspercent" color="#80c269"></el-progress>
             <p class="data">
               <span class="data-already">{{lock.onlineNums}}</span>
               <span class="data-all">/{{lock.totalNums}}</span>
@@ -57,7 +55,7 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.offlineNumspercent" color="#FF65B9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.offlineNumspercent" color="#E55EAB"></el-progress>
             <p class="data">
               <span class="data-already">{{cmbox.offlineNums}}</span>
               <span class="data-all">/{{cmbox.totalNums}}</span>
@@ -65,7 +63,7 @@
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.offlineNumspercent" color="#FF65B9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.offlineNumspercent" color="#E55EAB"></el-progress>
             <p class="data">
               <span class="data-already">{{meterbox.offlineNums}}</span>
               <span class="data-all">/{{meterbox.totalNums}}</span>
@@ -73,7 +71,7 @@
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.offlineNumspercent" color="#FF65B9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.offlineNumspercent" color="#E55EAB"></el-progress>
             <p class="data">
               <span class="data-already">{{lock.offlineNums}}</span>
               <span class="data-all">/{{lock.totalNums}}</span>
@@ -119,7 +117,7 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.notInstalledNumspercent" color="#20A9F9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.notInstalledNumspercent" color="#21a9fa"></el-progress>
             <p class="data">
               <span class="data-already">{{cmbox.notInstalledNums}}</span>
               <span class="data-all">/{{cmbox.totalNums}}</span>
@@ -127,7 +125,7 @@
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.notInstalledNumspercent" color="#20A9F9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.notInstalledNumspercent" color="#21a9fa"></el-progress>
             <p class="data">
               <span class="data-already">{{meterbox.notInstalledNums}}</span>
               <span class="data-all">/{{meterbox.totalNums}}</span>
@@ -135,7 +133,7 @@
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.notInstalledNumspercent" color="#20A9F9"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.notInstalledNumspercent" color="#21a9fa"></el-progress>
             <p class="data">
               <span class="data-already">{{lock.notInstalledNums}}</span>
               <span class="data-all">/{{lock.totalNums}}</span>
@@ -148,6 +146,7 @@
 </template>
 
 <script type="text/ecmascript-6">  
+import elProgress from 'component/elProgress'
 export default {
   name: "progressbar",   
   data() {
@@ -158,7 +157,9 @@ export default {
       warnList: [],
     }
   },
-  components: {},
+  components: {
+    elProgress
+  },
   async mounted() {
     this.warn = await this.$http.post('dmp/api/CurrentWarning/GetList')
   },
@@ -174,6 +175,8 @@ export default {
         meterbox: '智能电表',
         lock: '智能锁'
       }
+
+      this.warnList.length = 0
       for (let k in obj) {
         const type = {}
         if (obj[k].onlineNumspercent > warnPercent) {
@@ -191,7 +194,6 @@ export default {
 
         this.warnList.push({[map[k]]: type})
       }
-      console.log('this.warnList', this.warnList)
     },
   },
 }
@@ -209,13 +211,19 @@ export default {
   .progress
     position relative
     color $color-active
+    .text
+      position absolute
+      top -21px
+      left 53px
+      font-size 15px
     .title
       position relative
-      left 22px
+      left 19px
       display flex
       font-size $font-normal
       color #fff
       overflow hidden
+      background url('../common/img/title-border.png') no-repeat
       .roll-wrapper
         position absolute 
         right 22px
@@ -231,7 +239,7 @@ export default {
         display flex
         align-items center
         line-height 32px
-        background #1559A0  
+        margin-left 36px
     .count-group
       display flex
       .border-img
@@ -262,7 +270,7 @@ export default {
             padding-right 20px
             text-align right
           .label
-            width 28px
+            width 32px
           .el-progress
             flex 1
             margin 0 15px

@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" ref="wrapper">
     <qk-header></qk-header>
     <div class="container">
       <!-- <time-select></time-select> -->
@@ -27,25 +27,69 @@ export default {
 
     }
   },
+  mounted(){
+    setInterval(()=>{
+      if(this.cachenode) this.nodechange(this.cachenode);
+      },60000);
+    setInterval(()=>{
+      if(this.cachenode) this.Flush(this.cachenode);
+      },5000);
+    this.getconfig = this.$http.get('dmp/api/Config');
+    this.getconfig.then(config=>{
+      this.config = config;
+    });
+
+    this.setRap();
+    // document.body.style.overflowY = 'hidden';
+    // document.body.scrollTop(0);
+    window.onresize = ()=> {
+      this.setRap()
+    }
+  },
+  destroyed(){
+    window.onresize=null;
+    // document.body.style.overflowY = 'auto';
+  },
   methods:{
+    setRap(){
+      var wrapper = this.$refs.wrapper;
+      var rap = document.body.clientWidth / 1903 || 1
+      var raph = document.body.clientHeight / 1080 || 1
+      wrapper.style.transformOrigin = '0 0'
+      wrapper.style.transform = 'scale(' + rap + ',' + raph + ')'
+      wrapper.style.width = '1903px'
+      wrapper.style.height = '1080px'
+    },
     async nodechange(nodedata){
+      this.cachenode = nodedata;//缓存当前节点
       var httpresults = await this.$http.awaitTasks([
         this.$http.post('dmp/api/Cmbox/Status', nodedata),
         this.$http.post('dmp/api/Meterbox/Status', nodedata),
         this.$http.post('dmp/api/Lock/Status', nodedata),
       ])
-      computedPercent(httpresults)
+      computedPercent(httpresults);
+      if(!this.config) await this.getconfig;
       let data = {
         cmbox: httpresults[0],
         meterbox: httpresults[1],
         lock: httpresults[2],
-        warnPercent: 0.5
+        warnPercent: this.config.warnPercent * 100
       }
+      // if(this.cachedata){
+      //   if(JSON.stringify(this.cachedata)==JSON.stringify(this.data)) return;
+      // }
+      this.cachedata = data;
       this.$refs.right.deviceCount = httpresults[0].onlineNums+ httpresults[1].onlineNums+httpresults[2].onlineNums
       +httpresults[0].offlineNums+ httpresults[1].offlineNums+httpresults[2].offlineNums;
       this.$refs.progress.flush(data)
       this.$refs.left.flush(data)
     },
+    async Flush(nodedata){
+      var httpresult = await this.$http.post('dmp/api/Map/TotalCount', nodedata);
+      if(this.cachenode!=nodedata) return;//节点改变
+      this.$refs.right.mapArr[0].num= httpresult.lockRecord;
+      this.$refs.right.mapArr[1].num= httpresult.chargeCount;
+    }
   },
   components: {
     TimeSelect,
@@ -59,11 +103,14 @@ export default {
 
 <style scoped lang="stylus">
     .container
-      padding 0 2rem
+      padding 0 20px
+      margin-top -20px
       .layout
         display flex
-        margin-top 20px
-        .left, .right
+        margin-top 10px
+        .left
+          width 900px
+        .right
           flex 1
 </style>
 

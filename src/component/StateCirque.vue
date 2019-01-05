@@ -39,7 +39,7 @@ export default {
       // 引入echarts
       const echarts = require("echarts");
       const chart = echarts.init(this.$refs.cirque)
-      var color = ["#21a9fa", "#e55fab", "#80c269"]
+      var color = ["#80c269", "#e55fab", "#21a9fa"]
       var data = [
         {
           name: "在线",
@@ -53,7 +53,14 @@ export default {
           name: "未安装",
           value: obj.notInstalledNumspercent 
         }
-      ];
+      ]
+      // 删除为0的
+      data.forEach((item, index) => {
+        if (item.value === 0) {
+          data.splice(index, 1)
+          color.splice(index, 1)
+        }
+      })
       // 指定图表的配置项和数据
       var option = {
         // 图例
@@ -126,17 +133,17 @@ export default {
               // 饼图图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等.
               normal: {
                 show: true, // 是否显示标签[ default: false ]
-                fontSize: 16,
+                fontSize: 15,
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
-                formatter: "{b}:{c}%" // 标签内容
+                formatter: "{b}\n{c}%" // 标签内容
               }
             },
             labelLine: {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 6, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
-                length2: 6, // 视觉引导项第二段的长度。
+                length: 12, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length2: 12, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
                   //color: '#000',

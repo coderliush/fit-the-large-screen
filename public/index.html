@@ -6,12 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-  <title>control</title>
+  <title>监控面板</title>
   <script type="text/javascript" src="js/echarts/echarts.min.js"></script>
   <script type="text/javascript" src="js/echarts/echarts-gl.min.js"></script>
   <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=QgxP5nZfVwlwgZrykbUTOiBt8DIDIFP7"></script>
   <script type="text/javascript" src="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js"></script>
   <script type="text/javascript" src="js/echarts/bmap.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system,BlinkMacSystemFont,"SF Pro SC","SF Pro Text","Helvetica Neue",Helvetica,"PingFang SC","Segoe UI",Roboto,"Hiragino Sans GB",arial,'microsoft yahei ui',"Microsoft YaHei",SimSun,sans-serif;
+    }
+  </style>
 </head>
 
 <body>
@@ -21,23 +26,6 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 
-  <script>
-    function setRap() {
-      var wrapper = document.querySelector('.wrapper')
-      var rap = document.body.clientWidth / 1903 || 1
-      wrapper.style.width = '1903px'
-      wrapper.style.height = '1080px'
-      wrapper.style.transformOrigin = '0 0'
-      wrapper.style.transform = 'scale(' + rap + ',' + rap + ')'
-    }
-    window.onload = function () {
-      setRap()
-    }
-    // 改变窗口大小时重新设置 rem
-    window.onresize = function () {
-      setRap()
-    }
-  </script>
 </body>
 
 </html>   

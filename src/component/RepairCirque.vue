@@ -39,22 +39,32 @@ export default {
       // 引入echarts
       const echarts = require("echarts")
       const chart = echarts.init(this.$refs.cirque)
-      var color = ["#FFB10C", "#335B96"]
-      var data = [
-        {
-          name: "维修率",
-          value: obj.repaireNumspercent,
-        },
-        {
-          name: '未维修率',
-          value: 100 - obj.repaireNumspercent,
-          tooltip: {
-            show: false,
-            formatter: ''
+      // 维修暂无
+      if (obj.repaireNumspercent === 0) {
+        var color = ["#80c269"]
+        var data = [{ name: "", value: 0, label: {show: false}, labelLine: {show: false} }]
+      } else {
+        var color = ["#FFB10C", "#335B96"]
+        var data = [
+          {
+            name: "维修率",
+            value: obj.repaireNumspercent,
+          },
+          {
+            name: '未维修率',
+            value: 100 - obj.repaireNumspercent,
+            tooltip: {
+              show: false
+            },
+            label: {
+              show: false
+            },
+            labelLine: {
+              show: false
+            }
           }
-        }
-      ];
-
+        ]
+      }
       // 指定图表的配置项和数据
       var option = {
         // 图例
@@ -76,31 +86,6 @@ export default {
           show: true, // 是否显示提示框
           formatter: "维修率：{c}%" // 提示框显示内容,此处{b}表示各数据项名称，此项配置为默认显示项，{c}表示数据项的值，默认不显示，({d}%)表示数据项项占比，默认不显示。
         },
-        graphic: {
-          elements: [
-            {
-              type: "image",
-              style: {
-                // image: require("../common/img/icon/bulb.png"),
-                width: 20,
-                height: 20
-              },
-              left: "center",
-              top: "center"
-            },
-            {
-              type: "text",
-              style: {
-                text: "",
-                width: 20,
-                height: 20
-              },
-              left: "center",
-              top: "center"
-            }
-          ]
-        },
-
         // graphic 是原生图形元素组件。可以支持的图形元素包括：image, text, circle, sector, ring, polygon, polyline, rect, line, bezierCurve, arc, group,
         graphic: {
           elements: [
@@ -139,14 +124,11 @@ export default {
             label: {
               // 饼图图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等.
               normal: {
-                fontSize: 16,
+                fontSize: 15,
                 show: true, // 是否显示标签[ default: false ]
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
                 formatter: function (obj) {
-                  if (obj.value > 30 && obj.value < 70) {
-                    return `${obj.name}:\n${obj.value}%`
-                  }
-                  return  `${obj.name}:${obj.value}%`
+                  return `${obj.name}\n${obj.value}%`
                 }
               }
             },
@@ -154,8 +136,8 @@ export default {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 6, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
-                length2: 6, // 视觉引导项第二段的长度。
+                length: 12, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length2: 12, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
                   //color: '#000',
@@ -169,6 +151,9 @@ export default {
       };
 
       // 使用刚指定的配置项和数据显示图表
+      if (obj.repaireNumspercent === 0) {
+        option.graphic.elements[0].style.image = require("../common/img/icon/repair-no-data.png")
+      }
       chart.setOption(option);
     }
   }

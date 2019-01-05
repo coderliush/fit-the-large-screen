@@ -8,31 +8,34 @@ export default {
   props: {
     brand: {
       type: Array
+    },
+    index: {
+      type: Number
     }
   },
   data() {
-    return {};
+    return {
+
+    }
   },
   watch: {
     brand() {
       this.init(this.brand)
-    },
+    }
   },
   components: {},
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
     init(arr) {
       // 引入echarts
       const echarts = require("echarts")
       const chart = echarts.init(this.$refs.cirque)
-      let data = [], color = []
-      if (arr.length === 0) {
-        color = ['#91D2FA']
-        data = [{name: '品牌占比', value: 0}]
+      // 品牌暂无
+      if (arr === null) {
+        var color = ["#91D2FA"]
+        var data = [{ name: "", value: 0, label: {show: false}, labelLine: {show: false} }]
       } else {
-        color = ['#345A97', '#E55EAB', '#10B3C5', '#DBBD00']
+        var color = ["#345A97", "#E55EAB", "#00FFFB", "#DBBD00", '#40B181'], data = []
         arr.forEach((item, index) => {
           color.slice(0, index)
           data.push({
@@ -103,6 +106,7 @@ export default {
         series: [
           {
             name: "圆环图系列名称", // 系列名称
+            startAngle: 170,
             type: "pie", // 系列类型
             center: ["50%", "50%"], // 饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标。[ default: ['50%', '50%'] ]
             radius: ["40%", "60%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
@@ -112,18 +116,15 @@ export default {
               // 饼图图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等.
               normal: {
                 show: true, // 是否显示标签[ default: false ]
-                fontSize: 16,
-                align: 'left',
+                fontSize: 15,
+                align: "left",
                 position: "outside", // 标签的位置。'outside'饼图扇区外侧，通过视觉引导线连到相应的扇区。'inside','inner' 同 'inside',饼图扇区内部。'center'在饼图中心位置。
-                formatter:  function (obj) {
-                  if (obj.name.indexOf('网关') !=1) { return `${obj.name}\n{hr|}\n${obj.value}%`
-                  } else {
-                    return `${obj.name}:${obj.value}%`
-                  } 
+                formatter: function(obj) {
+                  return `${obj.name}\n{hr|}\n${obj.value}%`
                 },
                 rich: {
                   hr: {
-                    height: 0,
+                    height: 0
                   }
                 }
               }
@@ -132,8 +133,8 @@ export default {
               // 标签的视觉引导线样式,在 label 位置 设置为'outside'的时候会显示视觉引导线。
               normal: {
                 show: true, // 是否显示视觉引导线。
-                length: 6, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
-                length2: 6, // 视觉引导项第二段的长度。
+                length: 4, // 在 label 位置 设置为'outside'的时候会显示视觉引导线。
+                length2: 4, // 视觉引导项第二段的长度。
                 lineStyle: {
                   // 视觉引导线的样式
                   //color: '#000',
@@ -147,19 +148,21 @@ export default {
       };
 
       // 使用刚指定的配置项和数据显示图表
-      if (arr.length === 0) {
-        option.graphic.elements[0].style.image = require('common/img/icon/no-data.png')
-      } else {
-        console.log('brand.png')
-        option.graphic.elements[0].style.image = require('common/img/icon/brand.png')
+      if (arr === null) {
+        option.graphic.elements[0].style.image = require("../common/img/icon/no-data.png")
       }
       chart.setOption(option);
     },
     getColor() {
-        return '#'+ Math.random().toString(16).substr(-6)
-      }
+      return (
+        "#" +
+        Math.random()
+          .toString(16)
+          .substr(-6)
+      );
     }
   }
+};
 </script>
 
 <style scoped lang="stylus">

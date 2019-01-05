@@ -10,13 +10,17 @@ export function computedPercent(list) {
     }
     for (let k in item) {
       if (k !== 'totalNums') {
-        // percent范围：0-100，传的值大于总数，或者小于0，赋值阻止报错。
-        if (item[k] >= item['totalNums']) {
-          item[k + 'percent'] = 100
-        } else if (item[k] <= 0) {
+        if (item[k] === 0) {
           item[k + 'percent'] = 0
-        } else {
-          item[k + 'percent'] = Number((item[k] / item['totalNums'] * 100).toFixed(1))
+        } else if (item[k] === item['totalNums']) {
+          item[k + 'percent'] = 100
+        }  else {
+          item[k + 'percent'] = (item[k] / item['totalNums'] * 100).toFixed(2)
+        }
+
+        item['notInstalledNumspercent'] = (100 - item['onlineNumspercent'] - item['offlineNumspercent']).toFixed(2)
+        if (item['notInstalledNumspercent'] === '0.00') {
+          item['notInstalledNumspercent'] = 0
         }
       }
     }
@@ -25,14 +29,24 @@ export function computedPercent(list) {
 }
 
 function computedBrandPercent(list) {
+  let sum = 0
   let total = list.reduce((prev, next) => {
     return prev + next.nums
   }, 0)
-  list.forEach(item => {
-    if (item.nums === 0) {
-      item.percent = 0
-    } else {
-      item.percent = Number((item.nums/total*100).toFixed(1))
+  list.forEach((item, index, arr) => {
+    if (index !== arr.length -1) {
+      if (item.nums === 0) {
+        item.percent = 0
+      } else if (item.nums === total) {
+        item.percent = 100
+      } else {
+        item.percent = ((item.nums/total * 100).toFixed(2))
+      }
+      sum += Number(item.percent)
     }
   })
+  list[list.length - 1]['percent'] = (100 - sum).toFixed(2)
+  if (list[list.length - 1]['percent'] === '0.00') {
+    list[list.length - 1]['percent'] = 0
+  }
 }
