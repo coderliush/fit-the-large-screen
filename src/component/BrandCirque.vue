@@ -31,9 +31,9 @@ export default {
       const echarts = require("echarts")
       const chart = echarts.init(this.$refs.cirque)
       // 品牌暂无
-      if (arr === null) {
+      if (arr === null || arr.length === 0) {
         var color = ["#91D2FA"]
-        var data = [{ name: "", value: 0, label: {show: false}, labelLine: {show: false} }]
+        var data = [{ name: "品牌率", value: 0, label: {show: false}, labelLine: {show: false}, tooltip: { show: false} }]
       } else {
         var color = ["#345A97", "#E55EAB", "#00FFFB", "#DBBD00", '#40B181'], data = []
         arr.forEach((item, index) => {

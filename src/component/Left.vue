@@ -12,7 +12,7 @@
           <span class="font-small">网关总量</span>
           <span class="num">{{cmbox.totalNums|splitNum}}</span>
           <span class="font-small ml-20">实际维修</span>
-          <span class="num">{{cmbox.repaireNums}}</span>
+          <span class="num">{{cmbox.repaireNums|splitNum}}</span>
         </div>
       </div>
       <div class="container">
@@ -38,7 +38,7 @@
           <span class="font-small">电表总量</span>
           <span class="num">{{meterbox.totalNums|splitNum}}</span>
           <span class="font-small ml-20">实际维修</span>
-          <span class="num">{{meterbox.repaireNums}}</span>
+          <span class="num">{{meterbox.repaireNums|splitNum}}</span>
         </div>
       </div>
       <div class="container">
@@ -64,7 +64,7 @@
           <span class="font-small">锁总量</span>
           <span class="num">{{lock.totalNums|splitNum}}</span>
           <span class="font-small ml-20">实际维修</span>
-          <span class="num">{{lock.repaireNums}}</span>
+          <span class="num">{{lock.repaireNums|splitNum}}</span>
         </div>
       </div>
       <div class="container">

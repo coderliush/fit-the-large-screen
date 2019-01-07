@@ -42,7 +42,7 @@ export default {
       // 维修暂无
       if (obj.repaireNumspercent === 0) {
         var color = ["#80c269"]
-        var data = [{ name: "", value: 0, label: {show: false}, labelLine: {show: false} }]
+        var data = [{ name: "", value: 0, label: {show: false}, labelLine: {show: false}, tooltip: { show: false } }]
       } else {
         var color = ["#FFB10C", "#335B96"]
         var data = [

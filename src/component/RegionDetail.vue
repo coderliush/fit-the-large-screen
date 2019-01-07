@@ -1,6 +1,11 @@
 <template>
   <div class="wrapper">
-    <div class="img-wrapper"><img :src="pic" alt=""></div>
+    <div v-if="type === 1">
+      <div class="img-wrapper"><img :src="vpic" alt=""></div>
+    </div>
+    <div v-if="type === 2">
+      <div :class="cpic ? 'cell-wrapper' : null" class="img-wrapper"><img :src="cpic ? cpic : null" alt=""></div>
+    </div>
   </div>
 </template>
 
@@ -9,34 +14,26 @@ export default {
   name: '',
   props: {
     vpic: {
-      default: null,
+      default: '',
       type: Array
     },
-    vname :{
-      default: null,
-      type: String
-    },
     cpic :{
-      default: null,
+      default: '',
       type: String
-    }
-  },
-  watch: {
-    vpic() {
-      this.pic = this.vpic
     },
-    cpic() {
-      this.pic = this.cpic
+    type: {
+      default: 1,
+      type: Number
     }
   },
   data() {
     return {
-      pic: ''
+      isCell: false
     }
   },
   components: {},
   mounted() {
-
+    
   },
 }
 </script>
@@ -61,4 +58,9 @@ export default {
         img
           width 100%
           max-height 360px
+      .cell-wrapper
+        background rgba(49, 116, 208, 0.5)
+        img 
+          opacity .6
 </style>
+

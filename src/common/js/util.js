@@ -34,19 +34,21 @@ function computedBrandPercent(list) {
     return prev + next.nums
   }, 0)
   list.forEach((item, index, arr) => {
-    if (index !== arr.length -1) {
-      if (item.nums === 0) {
-        item.percent = 0
-      } else if (item.nums === total) {
-        item.percent = 100
-      } else {
-        item.percent = ((item.nums/total * 100).toFixed(2))
+    if (arr.length === 1) {
+      item.percent = 100
+    } else {
+      if (index !== arr.length -1) {
+        if (item.nums === 0) {
+          item.percent = 0
+        } else {
+          item.percent = ((item.nums/total * 100).toFixed(2))
+        }
+        sum += Number(item.percent)
       }
-      sum += Number(item.percent)
+      list[list.length - 1]['percent'] = (100 - sum).toFixed(2)
+      if (list[list.length - 1]['percent'] === '0.00') {
+        list[list.length - 1]['percent'] = 0
+      }
     }
   })
-  list[list.length - 1]['percent'] = (100 - sum).toFixed(2)
-  if (list[list.length - 1]['percent'] === '0.00') {
-    list[list.length - 1]['percent'] = 0
-  }
 }

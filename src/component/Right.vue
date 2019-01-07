@@ -105,22 +105,22 @@ export default {
       isActive: true,
       mapArr: [
         {
-          name: '门禁总数',
+          name: '开门次数',
           url: require("common/img/icon/mark1.png"),
           num: 0
         },
         {
-          name: '充电总数',
+          name: '充电次数',
           url: require("common/img/icon/mark2.png"),
           num: 0
         },
         {
-          name: '流量总数',
+          name: '充电度数',
           url: require("common/img/icon/mark3.png"),
           num: null
         },
         {
-          name: '用电总数',
+          name: '用电度数',
           url: require("common/img/icon/mark4.png"),
           num: null
         }
