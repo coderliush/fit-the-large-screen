@@ -35,7 +35,7 @@ export default {
         var color = ["#91D2FA"]
         var data = [{ name: "品牌率", value: 0, label: {show: false}, labelLine: {show: false}, tooltip: { show: false} }]
       } else {
-        var color = ["#345A97", "#E55EAB", "#00FFFB", "#DBBD00", '#40B181'], data = []
+        var color = ["#cae09e", "#ef9e88", "#11b3c5", "#a687bc", '#7873dc'], data = []
         arr.forEach((item, index) => {
           color.slice(0, index)
           data.push({
@@ -69,22 +69,22 @@ export default {
             {
               type: "image",
               style: {
-                image: require("../common/img/icon/brand.png"),
-                width: 60,
-                height: 50
+                image: require("../common/img/icon/crown.png"),
+                width: 30,
+                height: 30,
               },
               left: "center",
-              top: "center"
+              top: 80
             },
             {
               type: "text",
+              top: 120,
               style: {
-                text: "",
-                width: 20,
-                height: 20
+                text: "品牌占比",
+                fill: '#67B2DA',
+                font: 'bold 14px "Microsoft YaHei", sans-serif',
               },
               left: "center",
-              top: "center"
             }
           ]
         },
@@ -106,7 +106,7 @@ export default {
         series: [
           {
             name: "圆环图系列名称", // 系列名称
-            startAngle: 170,
+            startAngle: 200,
             type: "pie", // 系列类型
             center: ["50%", "50%"], // 饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标。[ default: ['50%', '50%'] ]
             radius: ["40%", "60%"], // 饼图的半径，数组的第一项是内半径，第二项是外半径。[ default: [0, '75%'] ]
@@ -149,19 +149,11 @@ export default {
 
       // 使用刚指定的配置项和数据显示图表
       if (arr === null) {
-        option.graphic.elements[0].style.image = require("../common/img/icon/no-data.png")
+        option.graphic.elements[1].style.text = '品牌暂无'
       }
       chart.setOption(option);
     },
-    getColor() {
-      return (
-        "#" +
-        Math.random()
-          .toString(16)
-          .substr(-6)
-      );
     }
-  }
 };
 </script>
 

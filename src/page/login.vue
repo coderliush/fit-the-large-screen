@@ -1,120 +1,100 @@
 <template>
-    <div class="login-container">
-
+    <div class="login-container" ref="wrapper">
         <el-form
             ref="loginForm"
             :model="loginForm"
             :rules="loginRules"
             class="login-form"
-            auto-complete="on"
             label-position="left"
         >
-
-            <!-- <div class="title-container">
-                <h3 class="title">{{ $t('login.title') }}</h3>
-                <lang-select class="set-language" />
-            </div> -->
-
-            <el-form-item prop="username">
-                <span class="svg-container">
-                    <i class="el-icon-share"></i>
-                </span>
-                <el-input
-                    v-model="loginForm.username"
-                    placeholder="请输入用户名"
-                    name="username"
-                    type="text"
-                    auto-complete="on"
-                />
-            </el-form-item>
-
-            <el-form-item prop="password">
-                <span class="svg-container">
-                    <i class="el-icon-share"></i>
-                </span>
-                <el-input
-                    :type="passwordType"
-                    v-model="loginForm.password"
-                    placeholder="请输入密码"
-                    name="password"
-                    auto-complete="on"
-                    @keyup.enter.native="handleLogin"
-                />
-                <span
-                    class="show-pwd"
-                    @click="showPwd"
-                >
-                    <i class="el-icon-share"></i>
-                </span>
-            </el-form-item>
-
-            <el-button
-                :loading="loading"
-                type="primary"
-                style="width:100%;margin-bottom:30px;"
-                @click.native.prevent="handleLogin"
-            >登陆</el-button>
+          <div class="title"><img src="../common/img/login/icon.png"><span>青客物联网监控面板</span></div>
+          <p class="warn" v-show="showWarn">*{{this.message}}</p>
+          <el-form-item prop="username" class="group">
+            <img src="../common/img/login/user.png" alt="">
+            <el-input
+                v-model="loginForm.username"
+                placeholder="请输入用户名"
+                name="username"
+                type="text"
+            />
+          </el-form-item>
+          <el-form-item prop="password" class="group">
+            <img src="../common/img/login/psd.png" alt="">
+            <el-input
+                :type="passwordType"
+                v-model="loginForm.password"
+                placeholder="请输入密码"
+                name="password"
+                @keyup.enter.native="handleLogin"
+            />
+          </el-form-item>
+          <el-button
+              class="botton"
+              :loading="loading"
+              type="primary"
+              style="width:100%;margin-bottom:30px;"
+              @click.native.prevent="handleLogin"
+          >登录</el-button>
         </el-form>
-
-        <el-dialog
-            :visible.sync="showDialog"
-            append-to-body
-        >
-         
-            <br>
-            <br>
-            <br>
-            <!-- <social-sign /> -->
-        </el-dialog>
-
     </div>
 </template>
 
 <script>
-// import { isvalidUsername } from "@/utils/validate";
-import { mapActions, mapState, mapGetters } from "vuex";
-// import LangSelect from "@/components/LangSelect";
-// import SocialSign from "./socialsignin";
 
 export default {
     name: "Login",
     components: {},
     data() {
-        return {
-            loginForm: {
-                username: "admin",
-                password: "1111111"
-            },
-            loginRules: {
-                username: [
-                    {
-                        required: true,
-                        trigger: "blur",
-                        validator: this.validateUsername
-                    }
-                ],
-                password: [
-                    {
-                        required: true,
-                        trigger: "blur",
-                        validator: this.validatePassword
-                    }
-                ]
-            },
-            passwordType: "password",
-            loading: false,
-            showDialog: false,
-            redirect: undefined
-        };
+      return {
+        loginForm: {
+          username: "",
+          password: ""
+        },
+        loginRules: {
+          username: [
+            {
+              required: true,
+              trigger: "blur",
+              // validator: this.validateUsername
+            }
+          ],
+          password: [
+            {
+              required: true,
+              trigger: "blur",
+              // validator: this.validatePassword
+            }
+          ]
+        },
+        passwordType: "password",
+        loading: false,
+        showDialog: false,
+        redirect: undefined,
+        showWarn: false,
+        message: ''
+      };
     },
-    created() {
-        // window.addEventListener('hashchange', this.afterQRScan)
+    mounted() {
+      this.setRap()
+      window.onresize = ()=> {
+        this.setRap()
+      }
+    },
+    destroyed(){
+      window.onresize=null;
+      // document.body.style.overflowY = 'auto';
     },
 
     methods: {
-        ...mapActions([
-            "LoginByUsername" // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
-        ]),
+      setRap(){
+        var wrapper = this.$refs.wrapper;
+        var rap = document.body.clientWidth / 1903 || 1
+        var raph = document.body.clientHeight / 1080 || 1
+        wrapper.style.transformOrigin = '0 0'
+        wrapper.style.transform = 'scale(' + rap + ',' + raph + ')'
+        wrapper.style.width = '1903px'
+        wrapper.style.height = '1080px'
+      },
         validateUsername(rule, value, callback) {
             // if (!isvalidUsername(value)) {
             //     callback(new Error("Please enter the correct user name"));
@@ -125,7 +105,7 @@ export default {
         validatePassword(rule, value, callback) {
             if (value.length < 6) {
                 callback(
-                    new Error("The password can not be less than 6 digits")
+                    // new Error("The password can not be less than 6 digits")
                 );
             } else {
                 callback();
@@ -138,126 +118,64 @@ export default {
                 this.passwordType = "password";
             }
         },
-        handleLogin() {
-            this.$refs.loginForm.validate(valid => {
-                if (valid) {
-                    this.LoginByUsername(this.loginForm);
-                } else {
-                    console.log("error submit!!");
-                    return false;
-                }
-            });
+        async handleLogin() {
+          const info = await this.$http.post('/dmp/api/Account/Login', this.loginForm)
+          if (info.message) {
+            this.showWarn = true
+            this.message = info.message
+          } else {
+            this.$http.setheader(info.access_token)
+            this.$router.push('home')
+          }
         }
     }
 };
 </script>
 
 <style lang="stylus">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+  input:-webkit-autofill , textarea:-webkit-autofill, select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    border: 1px solid #CCC!important;
+  }
 
-// $bg: #283443;
-// $light_gray: #eee;
-// $cursor: #fff;
-
-// @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-//     .login-container .el-input input {
-//         color: $cursor;
-//         &::first-line {
-//             color: $light_gray;
-//         }
-//     }
-// }
-
-/* reset element-ui css */
-.login-container {
-    .el-input {
-        display: inline-block;
-        height: 47px;
-        width: 85%;
-        input {
-            background: transparent;
-            border: 0px;
-            -webkit-appearance: none;
-            border-radius: 0px;
-            padding: 12px 5px 12px 15px;
-            color: $light_gray;
-            height: 47px;
-            caret-color: $cursor;
-            &:-webkit-autofill {
-                -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
-                -webkit-text-fill-color: $cursor !important;
-            }
-        }
-    }
-    .el-form-item {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        color: #454545;
-    }
-}
-
-.login-container {
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    background-color: $bg;
-    .login-form {
-        position: absolute;
-        left: 0;
-        right: 0;
-        width: 520px;
-        max-width: 100%;
-        padding: 35px 35px 15px 35px;
-        margin: 120px auto;
-    }
-    .tips {
-        font-size: 14px;
-        color: #fff;
-        margin-bottom: 10px;
-        span {
-            &:first-of-type {
-                margin-right: 16px;
-            }
-        }
-    }
-    .svg-container {
-        padding: 6px 5px 6px 15px;
-        color: $dark_gray;
-        vertical-align: middle;
-        width: 30px;
-        display: inline-block;
-    }
-    .title-container {
-        position: relative;
-        .title {
-            font-size: 26px;
-            color: $light_gray;
-            margin: 0px auto 40px auto;
-            text-align: center;
-            font-weight: bold;
-        }
-        .set-language {
-            color: #fff;
-            position: absolute;
-            top: 5px;
-            right: 0px;
-        }
-    }
-    .show-pwd {
-        position: absolute;
-        right: 10px;
-        top: 7px;
-        font-size: 16px;
-        color: $dark_gray;
-        cursor: pointer;
-        user-select: none;
-    }
-    .thirdparty-button {
-        position: absolute;
-        right: 35px;
-        bottom: 28px;
-    }
-}
+.login-container
+  background url('../common/img/login/bg.png') no-repeat
+  background-size cover
+  .login-form 
+    width 533px
+    height 556px
+    box-sizing border-box
+    padding 100px 111px 50px 75px
+    position absolute
+    right 210px
+    top 0
+    bottom 120px
+    margin auto
+    background url('../common/img/login/form-bg.png') no-repeat
+    .title 
+      margin-bottom 50px
+      span 
+        display inline-block
+        margin-left 15px
+        letter-spacing 1px
+        font-size 32px
+        color #ECFDFF
+    .warn
+      font-size 16px
+      margin-bottom 10px
+      color #CD1B0F
+    .group
+      margin-bottom 40px
+      img
+        position absolute
+        top 11px
+        left 12px 
+        z-index 9
+    .botton
+      font-size 20px
+      background url('../common/img/login/button.png') 100% 100%  no-repeat
+      font-weight bold
+      background-size 100%
+      letter-spacing 10px
+      border none
 </style>

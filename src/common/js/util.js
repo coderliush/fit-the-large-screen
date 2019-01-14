@@ -22,6 +22,9 @@ export function computedPercent(list) {
         if (item['notInstalledNumspercent'] === '0.00') {
           item['notInstalledNumspercent'] = 0
         }
+        if (item['notInstalledNumspercent'] === '100.00') {
+          item['notInstalledNumspercent'] = 100
+        }
       }
     }
   })

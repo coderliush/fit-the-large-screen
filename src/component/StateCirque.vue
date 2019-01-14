@@ -87,22 +87,22 @@ export default {
             {
               type: "image",
               style: {
-                image: require("../common/img/icon/state.png"),
-                width: 60,
-                height: 50
+                image: require("../common/img/icon/circle-bulb.png"),
+                width: 25,
+                height: 30
               },
               left: "center",
-              top: "center"
+              top: 80
             },
             {
               type: "text",
+              top: 120,
               style: {
-                text: "",
-                width: 20,
-                height: 20
+                text: "状态占比",
+                fill: '#67B2DA',
+                font: 'bold 14px "Microsoft YaHei", sans-serif',
               },
               left: "center",
-              top: "center"
             }
           ]
         },

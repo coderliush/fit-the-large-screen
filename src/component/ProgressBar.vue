@@ -4,16 +4,16 @@
       <p>
         <img src="../common/img/icon/bulb.png" alt="">
         【运营管理本部】设备状态</p>
-      <marquee direction=up Height=40 Loop=-1 Scrollamount=1 class="roll-wrapper">
+      <div class="roll-wrapper" ref="wrapper">
         <div class="roll" v-for="(item, index) in warnList" :key="index">
           <div v-for="(each, key) in item" :key="key"> 
-            <div class="each" v-for="(value, type) in each" :key="type">
+            <div class="each" v-for="(value, type) in each" :key="type" ref="each">
               <img src="../common/img/icon/notice.png" alt="">
               当下{{key}}/发生【{{value}}】【{{type}}】
             </div>
           </div>
         </div >
-      </marquee>
+      </div>
     </div>
     <div class="count-group">
       <img class="border-img" src="../common/img/border-left.png" alt="">
@@ -161,7 +161,7 @@ export default {
     elProgress
   },
   async mounted() {
-    this.warn = await this.$http.post('dmp/api/CurrentWarning/GetList')
+    // this.warn = await this.$http.post('dmp/api/CurrentWarning/GetList')
   },
   methods: {
     flush({cmbox, meterbox, lock, warnPercent}) {
@@ -193,8 +193,14 @@ export default {
         }
 
         this.warnList.push({[map[k]]: type})
+        this.$nextTick(() => {this.rollAnimation()})
       }
     },
+    rollAnimation() {
+      let nodeList = this.$refs.each
+      let wrapper = this.$refs.wrapper
+      if (nodeList) { wrapper.style.top = -nodeList.length * 45 + 'px' }
+    }
   },
 }
 </script>
@@ -203,10 +209,8 @@ export default {
 @import '~common/stylus/ui'
 @import '~common/stylus/variable'
   @keyframes rolling 
-    0% 
-      transform translateY(40px)
-    100%
-      transform translateY(-30px)
+    from 
+      top 20px
 
   .progress
     position relative
@@ -227,12 +231,14 @@ export default {
       .roll-wrapper
         position absolute 
         right 22px
+        animation rolling 20s infinite linear
         .roll .each
           display flex
           justify-content flex-end
           font-size $font-small
           color #BF0F27
-          margin 30px 0
+          padding 18px 0
+          font-weight bold
           img 
             margin-right 4px
       p

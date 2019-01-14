@@ -395,7 +395,7 @@ export default {
           this.cellselect = 0;
           this.vpics = httpresults[1].pics;
           // 小区图片只取一张;
-          this.vpic = this.vpics.splice(0, 1)
+          this.vpic = this.vpics.splice(0, 1)[0]
           this.mapArr[0].num = httpresults[1].openCount;
           this.mapArr[1].num = httpresults[1].chargeCount;
           this.cellcount = httpresults[1].cellCount;
@@ -467,16 +467,17 @@ export default {
       var chartmap = this.myChart;
       var canvas = null;
       var eventtrigger = (e,ename)=>{
-       if(!canvas){
-         var canvass = document.getElementById("bodymap").querySelectorAll("canvas");
-         if(canvass.length) canvas = canvass[canvass.length-1];
-         else return;
-       } 
+      if(!canvas){
+        var canvass = document.getElementById("bodymap").querySelectorAll("canvas");
+        if(canvass.length) canvas = canvass[canvass.length-1];
+        else return;
+      } 
        var ev = document.createEvent('MouseEvents');
        ev.initMouseEvent(ename,true,true,e.view,e.detail,e.screenX,e.screenY,e.clientX,e.clientY,e.ctrlKey,e.altKey,e.shiftKey,e.metaKey,e.button,e.relatedTarget,e.offsetX,e.offsetY);
        canvas.dispatchEvent(ev);
       }
       document.getElementById("mappic").onmouseover = e =>{
+        console.log('eee', e)
         eventtrigger(e,'mouseover');
       };
       document.getElementById("mappic").onmousemove = e =>{
@@ -494,6 +495,7 @@ export default {
       var cachepointdata={};
       var curshowid=0;
       var queryDeviceCount = (id)=>{
+        console.log('id', id)
         curshowid=id;
         if(!cachepointdata[id]) cachepointdata[id]=this.$http.post('dmp/api/Map/DeviceCount',{type:type,id:id});
         return cachepointdata[id];

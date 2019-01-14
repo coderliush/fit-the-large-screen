@@ -60,7 +60,12 @@ export default {
               show: false
             },
             labelLine: {
-              show: false
+              normal: {
+                show: false
+              },
+              emphasis: {
+                show: false
+              }
             }
           }
         ]
@@ -92,22 +97,22 @@ export default {
             {
               type: "image",
               style: {
-                image: require("../common/img/icon/repair.png"),
-                width: 60,
-                height: 50
+                image: require("../common/img/icon/operation.png"),
+                width: 30,
+                height: 30
               },
               left: "center",
-              top: "center"
+              top: 80
             },
             {
               type: "text",
+              top: 120,
               style: {
-                text: "",
-                width: 20,
-                height: 20
+                fill: '#67B2DA',
+                text: "维修占比",
+                font: 'bold 14px "Microsoft YaHei", sans-serif',
               },
               left: "center",
-              top: "center"
             }
           ]
         },
@@ -152,7 +157,7 @@ export default {
 
       // 使用刚指定的配置项和数据显示图表
       if (obj.repaireNumspercent === 0) {
-        option.graphic.elements[0].style.image = require("../common/img/icon/repair-no-data.png")
+        option.graphic.elements[1].style.text = '维修暂无'
       }
       chart.setOption(option);
     }

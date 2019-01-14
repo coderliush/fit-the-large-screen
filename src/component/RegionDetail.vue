@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
     <div v-if="type === 1">
-      <div class="img-wrapper"><img :src="vpic" alt=""></div>
+      <div class="img-wrapper"><img :src="propVpic" alt=""></div>
     </div>
     <div v-if="type === 2">
-      <div :class="cpic ? 'cell-wrapper' : null" class="img-wrapper"><img :src="cpic ? cpic : null" alt=""></div>
+      <div :class="propCpic ? 'cell-wrapper' : null" class="img-wrapper"><img :src="propCpic ? propCpic : null" alt=""></div>
     </div>
   </div>
 </template>
@@ -15,7 +15,7 @@ export default {
   props: {
     vpic: {
       default: '',
-      type: Array
+      type: String
     },
     cpic :{
       default: '',
@@ -26,26 +26,42 @@ export default {
       type: Number
     }
   },
+  watch: {
+    vpic() {
+      this.propVpic = this.vpic
+    },
+    cpic() {
+      this.propCpic = this.cpic
+    },
+    type() {
+      if (this.type === 1) {
+        this.propCpic = ''
+      } else {
+        this.propVpic = ''
+      }
+    },
+  },
   data() {
     return {
-      isCell: false
+      propVpic: '',
+      propCpic: '',
     }
   },
   components: {},
-  mounted() {
-    
+  mounted() { 
+
   },
 }
 </script>
 
 <style scoped lang="stylus">
     .wrapper
-      width 885px
+      width 877px
       height 750px 
       margin 0 auto
       position relative
       top -2px
-      left -6px
+      left -1px
       text-align center
       background url('../common/img/mapBg.png') no-repeat
       background-size: 100% 82%
