@@ -68,18 +68,23 @@
           <RegionDetail :type="showtype" :vname="vname" :vpic="vpic" :cpic="cpic" v-show="showtype"></RegionDetail>
         </div>
         <div class="count">
-          <p><span>公寓总数：</span><span class="number-active">{{cellcount|splitNum}}</span></p>
-          <p><span>设备总数：</span><span class="number-active">{{deviceCount|splitNum}}</span></p>
+          <p><span>公寓总数：</span><span>{{cellcount|splitNum}}</span></p>
+          <p><span>设备总数：</span><span>{{deviceCount|splitNum}}</span></p>
         </div>
         <div class="footer">
           <div class="item" v-for="(item, index) in mapArr" :key="index">
             <img :src="item.url" alt>
-            <div>
-              <p>{{item.name}}</p>
-              <p class="number-active">{{item.num|splitNum}}</p>
+            <div v-if="item.nums" style="position: relative;">
+              <p style="z-index: 999; height: 20px; background: #050A27;padding-right: 14px;">{{item.name}}</p>
+              <div>
+                <transition-group name="slide">
+                  <p v-for="num in item.nums" :key="num" class="number-active">{{num|splitNum}}</p>
+                </transition-group>
+              </div>
             </div>
           </div>
         </div>
+        <div class="shade"></div>
       </div>
       <img class="border-img map-right" src="../common/img/map-right.png" alt>
     </div>
@@ -107,22 +112,26 @@ export default {
         {
           name: '开门次数',
           url: require("common/img/icon/mark1.png"),
-          num: 0
+          num: 0,
+          nums: []
         },
         {
           name: '充电次数',
           url: require("common/img/icon/mark2.png"),
-          num: 0
+          num: 0,
+          nums: []
         },
         {
           name: '充电度数',
           url: require("common/img/icon/mark3.png"),
-          num: null
+          num: null,
+          nums: ['暂无']
         },
         {
           name: '用电度数',
           url: require("common/img/icon/mark4.png"),
-          num: null
+          num: null,
+          nums: ['暂无']
         }
       ],
       options: [{
@@ -179,6 +188,18 @@ export default {
     // setTimeout(() => this.init(), 300);
   },
   methods: {
+    setTabNum(i,v){
+      if(this.mapArr[i].nums.length===0){
+        this.mapArr[i].nums.push(v);
+      }
+      else if(this.mapArr[i].nums.length&&this.mapArr[i].nums[0]!=v){
+         this.mapArr[i].nums.length=0;
+         this.mapArr[i].nums.push(v);
+      }
+    },
+    getNum(i){
+      if(this.mapArr[i].nums.length) return this.mapArr[i].nums[this.mapArr[i].nums.length-1];
+    },
     //选择五级架构
     tab1() {
       this.isActive = true;
@@ -206,8 +227,10 @@ export default {
       var getvillage = null,villages = null;
       if(isleaf)  getvillage = this.$http.get(`/dmp/api/Map/QueryVillage/${id}`);
       const httpresult = await this.$http.post('/dmp/api/Map/MapPointCount',{id:id,isleaf:isleaf,path:path});
-      this.mapArr[0].num = httpresult.openCount;
-      this.mapArr[1].num = httpresult.chargeCount;
+      // this.setTabNum(0,httpresult.openCount);
+      // this.setTabNum(1,httpresult.chargeCount);
+      // this.mapArr[0].num = httpresult.openCount;
+      // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
       //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
@@ -254,8 +277,10 @@ export default {
       var getvillage = null,villages = null;
       if(isleaf)  getvillage = this.$http.get(`/dmp/api/Org/QueryVillage/${id}`);
       const httpresult = await this.$http.post('/dmp/api/Org/MapPointCount',{id:id,isleaf:isleaf,path:path});
-      this.mapArr[0].num = httpresult.openCount;
-      this.mapArr[1].num = httpresult.chargeCount;
+      // this.setTabNum(0,httpresult.openCount);
+      // this.setTabNum(1,httpresult.chargeCount);
+      // this.mapArr[0].num = httpresult.openCount;
+      // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
       //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
@@ -295,9 +320,17 @@ export default {
         if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1});
         else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2});
       }
-      else this.$emit('nodechange',{id:id,type:this.isActive?1:2});
+      else {
+        if(this.isActive&&id===0&&index===0){
+           var rootnode = this.orgs.find(item=>item.parrentid==0);
+           this.$emit('nodechange',{id:rootnode.id,type:this.isActive?1:2});
+        }
+        else
+          this.$emit('nodechange',{id:id,type:this.isActive?1:2});
+      }
 
       this.showtype=0;//显示地图
+      // await this.$http.Delay();
       this.villageselect = null;//清除小区选择
       this.cellselect = null;//清除单元选择
       this.celloptions = null;//清除单元选择
@@ -374,14 +407,12 @@ export default {
       }
     },
     async SelectVillage(id){
-       this.cellselect = null;//清除单元选择
         if(id==0){//选择全部
           //this.$emit('nodechange',{id:this.orgselescts[this.orgselescts.length-1],type:1});//更新图表
-          this.showtype = 0;
-          //this.celloptions = null;//清除单元选择
           this.SelectChange(this.orgselescts.length-1,this.orgselescts[this.orgselescts.length-1]);
         }
         else{
+          this.cellselect = null;//清除单元选择
           this.$emit('nodechange',{id:id,type:3});//更新图表
           this.showtype = 1;
           var village = this.villageoptions.find(v=>v.id==id);
@@ -395,9 +426,12 @@ export default {
           this.cellselect = 0;
           this.vpics = httpresults[1].pics;
           // 小区图片只取一张;
-          this.vpic = this.vpics.splice(0, 1)[0]
-          this.mapArr[0].num = httpresults[1].openCount;
-          this.mapArr[1].num = httpresults[1].chargeCount;
+          if(this.vpics) this.vpic = this.vpics.splice(0, 1)[0]
+          if(httpresults[1].re)
+          // this.setTabNum(0,httpresults[1].openCount);
+          // this.setTabNum(1,httpresults[1].chargeCount);
+          // this.mapArr[0].num = httpresults[1].openCount;
+          // this.mapArr[1].num = httpresults[1].chargeCount;
           this.cellcount = httpresults[1].cellCount;
           // this.deviceCount = httpresults[1].deviceCount;
         }
@@ -405,7 +439,6 @@ export default {
     async SelectCell(id){
        if(id==0){//选择全部
           //this.$emit('nodechange',{id:this.villageselect[this.villageselect.length-1],type:1});//更新图表
-          this.showtype=1;
           this.SelectVillage(this.villageselect);
         }
         else{
@@ -415,8 +448,10 @@ export default {
           this.showtype=2;
           const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}`);//28147 ${id}
           this.cpic = httpresult.pic;
-          this.mapArr[0].num = httpresult.openCount;
-          this.mapArr[1].num = httpresult.chargeCount;
+          // this.setTabNum(0,httpresult.openCount);
+          // this.setTabNum(1,httpresult.chargeCount);
+          // this.mapArr[0].num = httpresult.openCount;
+          // this.mapArr[1].num = httpresult.chargeCount;
           this.cellcount = httpresult.cellCount;
           // this.deviceCount = httpresult.deviceCount;
           //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
@@ -477,7 +512,6 @@ export default {
        canvas.dispatchEvent(ev);
       }
       document.getElementById("mappic").onmouseover = e =>{
-        console.log('eee', e)
         eventtrigger(e,'mouseover');
       };
       document.getElementById("mappic").onmousemove = e =>{
@@ -495,7 +529,6 @@ export default {
       var cachepointdata={};
       var curshowid=0;
       var queryDeviceCount = (id)=>{
-        console.log('id', id)
         curshowid=id;
         if(!cachepointdata[id]) cachepointdata[id]=this.$http.post('dmp/api/Map/DeviceCount',{type:type,id:id});
         return cachepointdata[id];
@@ -525,6 +558,12 @@ export default {
 
       // const pcenter = this.CityCenter[cityname]; //地图显示区域中心
       let view = this.getZoom(cityname,datalist);
+      var retry = 0;
+      while(view.zoom<5&&retry<5){
+        retry++;
+        await this.$http.Delay(50);
+        view = this.getZoom(cityname,datalist);
+      }
       this.$zoom = view.zoom;
       this.$center = view.center;
       if(cityname==="中国") this.$center =this.CityCenter[cityname];
@@ -724,7 +763,7 @@ export default {
             },
             tooltip: {
               trigger :'item',
-              position: 'top',
+              // position: 'top',
               formatter:(params)=>{
                 // console.log(params);
                 var node = params.value[2];
@@ -926,30 +965,67 @@ export default {
 
 <style lang="stylus">
 @import '~common/stylus/variable.styl';
+.slide-enter-active {
+  transition: all .8s linear;
+}
+.slide-leave-active {
+  transition: all .8s linear;
+}
+.slide-enter 
+  transform: translateY(100%);
+
+.slide-leave-to {
+  transform: translateY(-100%);
+
+
+}
+//   @keyframes enter 
+//     from 
+//       top 100px
+//     to 
+//       top 0
+//   @keyframes leave 
+//     from 
+//       top 0
+//     to 
+//       top -100px
+// .slide-leave-active
+//   animation leave 10s inlinear;
+
+// .slide-enter-active
+//   animation enter 10s inlinear;
+
+
 .number-active {
+  position: absolute;
+  top: 0;
   color: $number-active;
   font-weight: bold;
 }
 
+.footer .number-active {
+  top: 20px;
+}
+
 .tooltip-wrapper {
   position: relative;
-  width: 150px;
-  height: 80px;
-  padding: 6px 0 6px 10px;
+  // width: 150px;
+  // height: 80px;
+  padding: 12px;
   border-radius: 3px;
   background: #1C9AA8;
 }
 
-.tooltip-wrapper:before {
-  content: '';
-  position: absolute;  
-  bottom: -6px;
-  left: 70px;
-  width: 3px;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid #1C9AA8;
-}
+// .tooltip-wrapper:before {
+//   content: '';
+//   position: absolute;  
+//   bottom: -6px;
+//   left: 70px;
+//   width: 3px;
+//   border-left: 10px solid transparent;
+//   border-right: 10px solid transparent;
+//   border-top: 10px solid #1C9AA8;
+// }
 
 .title {
   display: flex;
@@ -997,8 +1073,8 @@ export default {
   .container {
     position: relative;
     flex: 1;
-    border-top: 1px solid #2F93C1;
-    border-bottom: 1px solid #2F93C1;
+    border-top: 1px solid #76c2ff;
+    border-bottom: 1px solid #76c2ff;
     height: 742px;
     .select-wrapper {
       margin: 6px 0;
@@ -1083,9 +1159,8 @@ export default {
       div {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         p:nth-child(1) {
-          font-size: $font-small;
+          // font-size: $font-small;
           margin-bottom: 4px;
         }
         p:nth-child(2) {
@@ -1093,6 +1168,13 @@ export default {
         }
       }
     }
+  }
+  .shade {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 14px;
+    background: #050A27;
   }
 }
 </style>

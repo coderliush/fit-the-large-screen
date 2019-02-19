@@ -3,7 +3,7 @@
     <qk-header></qk-header>
     <div class="container">
       <!-- <time-select></time-select> -->
-      <progress-bar ref="progress"></progress-bar>
+      <progress-bar ref="progress" :update="update"></progress-bar>
       <div class="layout">
         <left class="left" ref="left"/>
         <right class="right" ref="right" @nodechange="nodechange" />
@@ -24,16 +24,16 @@ export default {
   name: 'app',
   data() {
     return {
-
+      update: false
     }
   },
   mounted(){
     setInterval(()=>{
-      if(this.cachenode) this.nodechange(this.cachenode);
-      },60000);
-    setInterval(()=>{
-      if(this.cachenode) this.Flush(this.cachenode);
+      if(this.cachenode) this.nodechange(this.cachenode,true);
       },5000);
+    // setInterval(()=>{
+    //   if(this.cachenode) this.Flush(this.cachenode);
+    //   },5000);
     this.getconfig = this.$http.get('dmp/api/Config');
     this.getconfig.then(config=>{
       this.config = config;
@@ -56,12 +56,13 @@ export default {
       var rap = document.body.clientWidth / 1903 || 1
       var raph = document.body.clientHeight / 1080 || 1
       wrapper.style.transformOrigin = '0 0'
-      wrapper.style.transform = 'scale(' + rap + ',' + raph + ')'
+      wrapper.style.transform = 'scale(' + rap + ',' + raph + ') translateZ(0)'
       wrapper.style.width = '1903px'
       wrapper.style.height = '1080px'
     },
-    async nodechange(nodedata){
-      this.cachenode = nodedata;//缓存当前节点
+    async nodechange(nodedata,isInterval){
+      if(!isInterval) this.cachenode = nodedata;//缓存当前节点
+      this.Flush(nodedata,isInterval);
       var httpresults = await this.$http.awaitTasks([
         this.$http.post('dmp/api/Cmbox/Status', nodedata),
         this.$http.post('dmp/api/Meterbox/Status', nodedata),
@@ -84,11 +85,16 @@ export default {
       this.$refs.progress.flush(data)
       this.$refs.left.flush(data)
     },
-    async Flush(nodedata){
+    async Flush(nodedata,isInterval){
       var httpresult = await this.$http.post('dmp/api/Map/TotalCount', nodedata);
       if(this.cachenode!=nodedata) return;//节点改变
-      this.$refs.right.mapArr[0].num= httpresult.lockRecord;
-      this.$refs.right.mapArr[1].num= httpresult.chargeCount;
+      if(this.$refs.right.getNum(0)!=httpresult.lockRecord||this.$refs.right.getNum(1)!=httpresult.chargeCount){
+        if(isInterval) this.update = !this.update;
+      }
+      this.$refs.right.setTabNum(0,httpresult.lockRecord);
+      this.$refs.right.setTabNum(1,httpresult.chargeCount);
+      // this.$refs.right.mapArr[0].num= httpresult.lockRecord;
+      // this.$refs.right.mapArr[1].num= httpresult.chargeCount;
     }
   },
   components: {

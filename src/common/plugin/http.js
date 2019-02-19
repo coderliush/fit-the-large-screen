@@ -73,7 +73,7 @@ const handleResult = (res) => {
           return res.data.data;
         }
         else {
-          return res.data;
+            throw res.data;
         }
 
     }
@@ -124,6 +124,13 @@ var http = {
             result.push(await tasks[i]);
         }
         return result;
+    },
+    async Delay(ms) {
+        return new Promise((reslove,reject)=>{
+            setTimeout(()=>{
+                reslove()
+            },ms)
+        });
     }
 }
 

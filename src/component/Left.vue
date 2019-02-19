@@ -4,8 +4,7 @@
       <div class="title">
         <div class="left">
           <p>
-            <img src="../common/img/icon/wifi.png" alt="">
-            <span>【运营管理本部】网关情况</span>
+            <span>网关设备情况</span>
           </p>
         </div>
         <div class="right">
@@ -30,8 +29,7 @@
       <div class="title">
         <div class="left">
           <p>
-            <img src="../common/img/icon/electric.png" alt="">
-            <span>【运营管理本部】智能电表设备情况</span>
+            <span>电表设备情况</span>
           </p>
         </div>
         <div class="right">
@@ -56,8 +54,7 @@
       <div class="title">
         <div class="left">
           <p>
-            <img src="../common/img/icon/lock.png" alt="">
-            <span>【运营管理本部】智能门锁设备情况</span>
+            <span>门锁设备情况</span>
           </p>
         </div>
         <div class="right">
@@ -129,9 +126,10 @@ export default {
     .title
       position relative
       display flex
-      margin-left 24px
+      margin-left 26px
       line-height 32px
       background url('../common/img/title-border.png') no-repeat
+      background-size 228px 100%
       .left
         display flex
         p
@@ -158,12 +156,12 @@ export default {
       display flex
       justify-content center
       .border 
-        height 215px
+        height 216px
       .cirque-wrapper
         flex 1
         display flex
-        border-top 1px solid #3C8AB6
-        border-bottom 1px solid #3C8AB6
+        border-top 1px solid #76c2ff
+        border-bottom 1px solid #76c2ff
         .item
           width 33%
         .tooltip

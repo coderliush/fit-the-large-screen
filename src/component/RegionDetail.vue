@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
     <div v-if="type === 1">
-      <div class="img-wrapper"><img :src="propVpic" alt=""></div>
+      <div class="img-wrapper"><img :src="propVpic()" alt=""></div>
     </div>
     <div v-if="type === 2">
-      <div :class="propCpic ? 'cell-wrapper' : null" class="img-wrapper"><img :src="propCpic ? propCpic : null" alt=""></div>
+      <div :class="cpic ? 'cell-wrapper' : null" class="img-wrapper"><img :src="propCpic()" alt=""></div>
     </div>
   </div>
 </template>
@@ -17,7 +17,7 @@ export default {
       default: '',
       type: String
     },
-    cpic :{
+    cpic: {
       default: '',
       type: String
     },
@@ -26,25 +26,27 @@ export default {
       type: Number
     }
   },
+  methods: {
+    propVpic() {
+      if (this.vpic) { return this.vpic } else { return require('../common/img/no-pic.jpg')} 
+    },
+    propCpic() {
+      if (this.cpic) { return this.cpic } else { return require('../common/img/no-pic.jpg')}  
+    },
+  },
   watch: {
-    vpic() {
-      this.propVpic = this.vpic
-    },
-    cpic() {
-      this.propCpic = this.cpic
-    },
     type() {
       if (this.type === 1) {
-        this.propCpic = ''
+        
       } else {
-        this.propVpic = ''
+
       }
     },
   },
   data() {
     return {
-      propVpic: '',
-      propCpic: '',
+      // propVpic: '',
+      // propCpic: '',
     }
   },
   components: {},

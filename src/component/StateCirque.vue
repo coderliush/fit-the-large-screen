@@ -57,8 +57,8 @@ export default {
       // 删除为0的
       data.forEach((item, index) => {
         if (item.value === 0) {
-          data.splice(index, 1)
-          color.splice(index, 1)
+          delete data[index]
+          delete color[index]
         }
       })
       // 指定图表的配置项和数据

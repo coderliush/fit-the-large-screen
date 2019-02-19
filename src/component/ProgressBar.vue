@@ -1,18 +1,17 @@
 <template>
   <div class="progress">
     <div class="title">
-      <p>
-        <img src="../common/img/icon/bulb.png" alt="">
-        【运营管理本部】设备状态</p>
+      <p>设备状态</p>
       <div class="roll-wrapper" ref="wrapper">
-        <div class="roll" v-for="(item, index) in warnList" :key="index">
+        <img src="../common/img/update.png" alt="">
+        <!-- <div class="roll" v-for="(item, index) in warnList" :key="index">
           <div v-for="(each, key) in item" :key="key"> 
             <div class="each" v-for="(value, type) in each" :key="type" ref="each">
               <img src="../common/img/icon/notice.png" alt="">
               当下{{key}}/发生【{{value}}】【{{type}}】
             </div>
           </div>
-        </div >
+        </div> -->
       </div>
     </div>
     <div class="count-group">
@@ -55,7 +54,7 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.offlineNumspercent" color="#E55EAB"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.offlineNumspercent" color="#E55EAB" :config="config"></el-progress>
             <p class="data">
               <span class="data-already">{{cmbox.offlineNums}}</span>
               <span class="data-all">/{{cmbox.totalNums}}</span>
@@ -63,7 +62,7 @@
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.offlineNumspercent" color="#E55EAB"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.offlineNumspercent" color="#E55EAB" :config="config"></el-progress>
             <p class="data">
               <span class="data-already">{{meterbox.offlineNums}}</span>
               <span class="data-all">/{{meterbox.totalNums}}</span>
@@ -71,7 +70,7 @@
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.offlineNumspercent" color="#E55EAB"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.offlineNumspercent" color="#E55EAB" :config="config"></el-progress>
             <p class="data">
               <span class="data-already">{{lock.offlineNums}}</span>
               <span class="data-all">/{{lock.totalNums}}</span>
@@ -86,7 +85,7 @@
           </div>
           <div class="bar">
             <p>网关</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.repaireNumspercent" color="#FDAE0B"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="cmbox.repaireNumspercent" color="#FDAE0B" :config="config"></el-progress>
             <p class="data">
               <span class="data-already">{{cmbox.repaireNums}}</span>
               <span class="data-all">/{{cmbox.totalNums}}</span>
@@ -94,7 +93,7 @@
           </div>
           <div class="bar">
             <p>电表</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.repaireNumspercent" color="#FDAE0B"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="meterbox.repaireNumspercent" color="#FDAE0B" :config="config"></el-progress>
             <p class="data">
               <span class="data-already">{{meterbox.repaireNums}}</span>
               <span class="data-all">/{{meterbox.totalNums}}</span>
@@ -102,7 +101,7 @@
           </div>
           <div class="bar">
             <p class="label">锁</p>
-            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.repaireNumspercent" color="#FDAE0B"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="18" :percentage="lock.repaireNumspercent" color="#FDAE0B" :config="config"></el-progress>
             <p class="data">
               <span class="data-already">{{lock.repaireNums}}</span>
               <span class="data-all">/{{lock.totalNums}}</span>
@@ -110,7 +109,7 @@
           </div>
         </div>
 
-        <div class="item">
+        <!-- <div class="item">
           <div class="sub">
             <img src="../common/img/icon/wheel.png" alt="">
             <p>未安装设备统计</p>
@@ -139,7 +138,7 @@
               <span class="data-all">/{{lock.totalNums}}</span>
             </p>
           </div>
-        </div>
+        </div> -->
       <img class="border-img" src="../common/img/border-right.png" alt="">
     </div>
   </div>
@@ -155,10 +154,36 @@ export default {
       meterbox: {},
       lock: {},
       warnList: [],
+      config: {
+        green: '#80C269',
+        barStyle: {
+          left: 'inherit',
+          right: '0!important'
+        },
+        textStyle: {
+          position: 'absolute',
+          top: '20%',
+          right: 0
+        }
+      }
+    }
+  },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
     elProgress
+  },
+  watch: {
+    update() {
+      this.$refs.wrapper.classList.add('gif')
+      setTimeout(()=>{
+        this.$refs.wrapper.classList.remove('gif')
+      }, 4000)
+    }
   },
   async mounted() {
     // this.warn = await this.$http.post('dmp/api/CurrentWarning/GetList')
@@ -209,8 +234,8 @@ export default {
 @import '~common/stylus/ui'
 @import '~common/stylus/variable'
   @keyframes rolling 
-    from 
-      top 20px
+    to
+      top -40px
 
   .progress
     position relative
@@ -228,10 +253,14 @@ export default {
       color #fff
       overflow hidden
       background url('../common/img/title-border.png') no-repeat
+      background-size 228px 100%
+      margin-left 2px
+      .gif
+        animation rolling 4s linear
       .roll-wrapper
         position absolute 
+        top 40px
         right 22px
-        animation rolling 20s infinite linear
         .roll .each
           display flex
           justify-content flex-end
@@ -285,6 +314,9 @@ export default {
       .item:nth-of-type(2)
         padding-left 20px
         padding-right 20px
+      .item:nth-of-type(3)
+        .bar
+          border none
       .item:nth-of-type(4)
         padding-left 20px
         padding-right 20px

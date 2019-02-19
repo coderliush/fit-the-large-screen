@@ -16,6 +16,7 @@
                 placeholder="请输入用户名"
                 name="username"
                 type="text"
+                autocomplete="off"
             />
           </el-form-item>
           <el-form-item prop="password" class="group">
@@ -26,6 +27,8 @@
                 placeholder="请输入密码"
                 name="password"
                 @keyup.enter.native="handleLogin"
+                @focus="focus"
+                autocomplete="off"
             />
           </el-form-item>
           <el-button
@@ -35,12 +38,14 @@
               style="width:100%;margin-bottom:30px;"
               @click.native.prevent="handleLogin"
           >登录</el-button>
+          <el-checkbox label="记住登录状态" v-model="isChecked"></el-checkbox>
         </el-form>
+        <img class="ball" src="../common/img/login/ball.png" alt="">
     </div>
 </template>
 
 <script>
-
+import {encrypt, decrypt} from 'common/js/privacy.js'
 export default {
     name: "Login",
     components: {},
@@ -53,24 +58,25 @@ export default {
         loginRules: {
           username: [
             {
-              required: true,
-              trigger: "blur",
+              // required: true,
+              // trigger: "blur",
               // validator: this.validateUsername
             }
           ],
           password: [
             {
-              required: true,
-              trigger: "blur",
+              // required: true,
+              // trigger: "blur",
               // validator: this.validatePassword
             }
           ]
         },
-        passwordType: "password",
+        passwordType: "",
         loading: false,
         showDialog: false,
         redirect: undefined,
         showWarn: false,
+        isChecked: false,
         message: ''
       };
     },
@@ -78,6 +84,21 @@ export default {
       this.setRap()
       window.onresize = ()=> {
         this.setRap()
+      }
+
+      let key = 'key'
+      if (localStorage.getItem('isChecked') === 'true') {
+        this.isChecked = true
+        this.passwordType = 'password'
+        this.loginForm = JSON.parse(localStorage.getItem('loginFormStorge'))
+        this.loginForm.username = decrypt(this.loginForm.username, key)
+        this.loginForm.password = decrypt(this.loginForm.password, key)
+      } else {
+        this.isChecked = false
+        this.loginForm = {
+          username: '',
+          password: ''
+        }
       }
     },
     destroyed(){
@@ -91,43 +112,62 @@ export default {
         var rap = document.body.clientWidth / 1903 || 1
         var raph = document.body.clientHeight / 1080 || 1
         wrapper.style.transformOrigin = '0 0'
-        wrapper.style.transform = 'scale(' + rap + ',' + raph + ')'
+        wrapper.style.transform = 'scale(' + rap + ',' + raph + ') translateZ(0)'
         wrapper.style.width = '1903px'
         wrapper.style.height = '1080px'
       },
-        validateUsername(rule, value, callback) {
-            // if (!isvalidUsername(value)) {
-            //     callback(new Error("Please enter the correct user name"));
-            // } else {
-            //     callback();
-            // }
-        },
-        validatePassword(rule, value, callback) {
-            if (value.length < 6) {
-                callback(
-                    // new Error("The password can not be less than 6 digits")
-                );
-            } else {
-                callback();
-            }
-        },
-        showPwd() {
-            if (this.passwordType === "password") {
-                this.passwordType = "";
-            } else {
-                this.passwordType = "password";
-            }
-        },
-        async handleLogin() {
-          const info = await this.$http.post('/dmp/api/Account/Login', this.loginForm)
-          if (info.message) {
-            this.showWarn = true
-            this.message = info.message
+      validateUsername(rule, value, callback) {
+          // if (!isvalidUsername(value)) {
+          //     callback(new Error("Please enter the correct user name"));
+          // } else {
+          //     callback();
+          // }
+      },
+      validatePassword(rule, value, callback) {
+          if (value.length < 6) {
+              callback(
+                  // new Error("The password can not be less than 6 digits")
+              );
           } else {
-            this.$http.setheader(info.access_token)
-            this.$router.push('home')
+              callback()
           }
+      },
+      focus() {
+        this.passwordType = "password"
+      },
+      async handleLogin() {
+        if (!this.loginForm.username) {
+          this.showWarn = true
+          this.message = '用户名不能为空'
+          return
         }
+        if (!this.loginForm.password) {
+          this.showWarn = true
+          this.message = '密码不能为空'
+          return
+        }
+        const info = await this.$http.post('/dmp/api/Account/Login', this.loginForm).catch(res => res)
+        if (info.access_token) {
+          this.$http.setheader(info.access_token)
+          this.$router.push('home')
+          this.rememberPsd()
+        } else {
+          this.showWarn = true
+          this.message = info.message
+        }
+      },
+      rememberPsd() {
+        let key = 'key'
+        if (this.isChecked) {
+          localStorage.setItem('isChecked', true)
+          this.loginForm.username = encrypt(this.loginForm.username, key)    
+          this.loginForm.password = encrypt(this.loginForm.password, key)    
+          localStorage.setItem('loginFormStorge', JSON.stringify(this.loginForm))
+        } else {
+          localStorage.setItem('isChecked', false)
+          localStorage.setItem('loginFormStorge', '')
+        } 
+      }
     }
 };
 </script>
@@ -138,9 +178,22 @@ export default {
     border: 1px solid #CCC!important;
   }
 
+@keyframes rotate 
+  from
+    transform scale(0deg)
+  to
+    transform scale(360deg)
+
+.ball 
+  animation rotate 30s linear infinite
+
 .login-container
   background url('../common/img/login/bg.png') no-repeat
   background-size cover
+  >img 
+    position relative
+    top 100px
+    left 100px
   .login-form 
     width 533px
     height 556px

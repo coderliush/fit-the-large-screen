@@ -33,7 +33,9 @@ export default {
       // 品牌暂无
       if (arr === null || arr.length === 0) {
         var color = ["#91D2FA"]
-        var data = [{ name: "品牌率", value: 0, label: {show: false}, labelLine: {show: false}, tooltip: { show: false} }]
+        // 没有数据的修改为青客电表 100%
+        // var data = [{ name: "品牌率", value: 0, label: {show: false}, labelLine: {show: false}, tooltip: { show: false} }]    
+        var data = [{ name: "青客电表", value: 100 }]
       } else {
         var color = ["#cae09e", "#ef9e88", "#11b3c5", "#a687bc", '#7873dc'], data = []
         arr.forEach((item, index) => {
@@ -149,7 +151,8 @@ export default {
 
       // 使用刚指定的配置项和数据显示图表
       if (arr === null) {
-        option.graphic.elements[1].style.text = '品牌暂无'
+        // option.graphic.elements[1].style.text = '品牌暂无'         // 没有品牌的修改为青客电表
+        option.graphic.elements[1].style.text = '品牌占比'
       }
       chart.setOption(option);
     },

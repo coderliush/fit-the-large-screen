@@ -15,9 +15,9 @@
     aria-valuemax="100"
   >
     <div class="el-progress-bar" v-if="type === 'line'">
-      <div class="el-progress-bar__outer" :style="{height: strokeWidth + 'px'}">
+      <div class="el-progress-bar__outer" :style="{height: strokeWidth + 'px', background: config.green + '!important'}">
         <div class="el-progress-bar__inner" :style="barStyle">
-          <div class="el-progress-bar__innerText" v-if="showText && textInside">{{percentage}}%</div>
+          <div class="el-progress-bar__innerText" :style="config.textStyle" v-if="showText && textInside">{{percentage}}%</div>
         </div>
       </div>
     </div>
@@ -72,6 +72,10 @@
       color: {
         type: String,
         default: ''
+      },
+      config: {
+        type: Object,
+        default: () => ({})
       }
     },
     computed: {
@@ -83,6 +87,7 @@
           style.width = this.percentage + '%';
         }
         style.backgroundColor = this.color;
+        Object.assign(style, this.config.barStyle)
         return style;
       },
       relativeStrokeWidth() {

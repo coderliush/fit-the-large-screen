@@ -44,7 +44,7 @@ export default {
         var color = ["#80c269"]
         var data = [{ name: "", value: 0, label: {show: false}, labelLine: {show: false}, tooltip: { show: false } }]
       } else {
-        var color = ["#FFB10C", "#335B96"]
+        var color = ["#FFB10C", "#80c269"]
         var data = [
           {
             name: "维修率",

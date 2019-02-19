@@ -13,7 +13,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/dmp': {
-        target: 'http://172.16.0.148:20001'
+        target: 'http://172.16.0.148:20003'
       }
     }
   }
